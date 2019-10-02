@@ -1,0 +1,10 @@
+#IDEA
+.idea
+*.iml
+
+#VSCODE
+.vscode
+
+#PROJECT
+go.sum
+jvmgo
