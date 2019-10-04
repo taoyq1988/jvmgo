@@ -4,11 +4,12 @@ import "encoding/binary"
 
 type ClassReader struct {
 	data []byte
+	cp   *ConstantPool
 }
 
 func newClassReader(data []byte) *ClassReader {
 	return &ClassReader{
-		data:data,
+		data: data,
 	}
 }
 

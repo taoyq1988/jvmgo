@@ -2,7 +2,7 @@ package classpath
 
 import "strings"
 
-type CompositeEntry struct{
+type CompositeEntry struct {
 	entries []Entry
 }
 
@@ -19,7 +19,7 @@ func (composite *CompositeEntry) addEntry(subEntry Entry) {
 	composite.entries = append(composite.entries, subEntry)
 }
 
-func(composite *CompositeEntry) readClass(className string) (data []byte, err error) {
+func (composite *CompositeEntry) readClass(className string) (data []byte, err error) {
 	for _, e := range composite.entries {
 		data, err = e.readClass(className)
 		if err == nil {
@@ -29,7 +29,7 @@ func(composite *CompositeEntry) readClass(className string) (data []byte, err er
 	return
 }
 
-func(composite *CompositeEntry) open() error {
+func (composite *CompositeEntry) open() error {
 	//for _, e := range composite.entries {
 	//	err := e.open()
 	//	if err != nil {
@@ -39,7 +39,7 @@ func(composite *CompositeEntry) open() error {
 	return nil
 }
 
-func(composite *CompositeEntry) release() error {
+func (composite *CompositeEntry) release() error {
 	//for _, e := range composite.entries {
 	//	err := e.release()
 	//	if err != nil {
@@ -49,11 +49,10 @@ func(composite *CompositeEntry) release() error {
 	return nil
 }
 
-func(composite *CompositeEntry) String() string {
+func (composite *CompositeEntry) String() string {
 	paths := make([]string, 0)
 	for _, e := range composite.entries {
 		paths = append(paths, e.String())
 	}
 	return strings.Join(paths, pathListSeparator)
 }
-

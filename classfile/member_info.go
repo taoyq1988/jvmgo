@@ -17,8 +17,8 @@ method_info {
 }
 */
 type MemberInfo struct {
-	AccessFlags uint16
-	NameIndex uint16
+	AccessFlags     uint16
+	NameIndex       uint16
 	DescriptorIndex uint16
 	AttributeTable
 }

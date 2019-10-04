@@ -86,3 +86,18 @@ func parseConstantPool(reader *ClassReader) ConstantPool {
 
 	return ConstantPool{Infos: consts}
 }
+
+func (cp *ConstantPool) getConstantInfo(index uint16) ConstantInfo {
+	if cpInfo := cp.Infos[index]; cpInfo == nil {
+		panic(fmt.Errorf("invalid constant pool index: %d", index))
+	} else {
+		return cpInfo
+	}
+}
+
+func (cp *ConstantPool) getUtf8(index uint16) string {
+	if index == 0 {
+		return ""
+	}
+	return cp.getConstantInfo(index).(string)
+}

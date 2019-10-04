@@ -4,14 +4,14 @@ import "flag"
 
 const (
 	defaultClasspath = "."
-	defaultBootJar = "./jar/rt.jar"
+	defaultBootJar   = "./jar/rt.jar"
 )
 
 type Options struct {
-	Classpath string
+	Classpath   string
 	BootJarPath string
-	HelpFlag bool
-	Version  bool
+	HelpFlag    bool
+	Version     bool
 }
 
 func Parse() (Options, []string) {

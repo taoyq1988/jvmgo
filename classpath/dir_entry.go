@@ -17,7 +17,7 @@ func newDirEntry(path string) *DirEntry {
 	return &DirEntry{absDir}
 }
 
-func(dir *DirEntry) readClass(className string) ([]byte, error) {
+func (dir *DirEntry) readClass(className string) ([]byte, error) {
 	fileName := filepath.Join(dir.absDir, className)
 	data, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -26,14 +26,14 @@ func(dir *DirEntry) readClass(className string) ([]byte, error) {
 	return data, nil
 }
 
-func(dir *DirEntry) open() error {
+func (dir *DirEntry) open() error {
 	return nil
 }
 
-func(dir *DirEntry) release() error {
+func (dir *DirEntry) release() error {
 	return nil
 }
 
-func(dir *DirEntry) String() string {
+func (dir *DirEntry) String() string {
 	return dir.absDir
 }

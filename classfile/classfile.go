@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	magicNumber = 0xCAFEBABE
+	magicNumber    = 0xCAFEBABE
 	supportVersion = 52
 )
 
@@ -34,13 +34,13 @@ type Classfile struct {
 	//Magic uint32
 	MinorVersion uint16
 	MajorVersion uint16
-	ConstPool ConstantPool
-	AccessFlags uint16
-	ThisClass uint16
-	SuperClass uint16
-	Interfaces []uint16
-	Fields []MemberInfo
-	Methods []MemberInfo
+	ConstPool    ConstantPool
+	AccessFlags  uint16
+	ThisClass    uint16
+	SuperClass   uint16
+	Interfaces   []uint16
+	Fields       []MemberInfo
+	Methods      []MemberInfo
 	AttributeTable
 }
 
@@ -54,7 +54,7 @@ func Parse(data []byte) (*Classfile, error) {
 	return cf, nil
 }
 
-func(cf *Classfile) parse(reader *ClassReader) (err error) {
+func (cf *Classfile) parse(reader *ClassReader) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			var ok bool
@@ -67,6 +67,7 @@ func(cf *Classfile) parse(reader *ClassReader) (err error) {
 	cf.parseAndCheckMagic(reader)
 	cf.parseAndCheckVersion(reader)
 	cf.ConstPool = parseConstantPool(reader)
+	reader.cp = &cf.ConstPool
 	cf.AccessFlags = reader.readUint16()
 	cf.ThisClass = reader.readUint16()
 	cf.SuperClass = reader.readUint16()
@@ -77,14 +78,14 @@ func(cf *Classfile) parse(reader *ClassReader) (err error) {
 	return
 }
 
-func(cf *Classfile) parseAndCheckMagic(reader *ClassReader) {
+func (cf *Classfile) parseAndCheckMagic(reader *ClassReader) {
 	magic := reader.readUint32()
 	if magic != magicNumber {
 		panic("magic number is not " + strconv.FormatInt(magicNumber, 16))
 	}
 }
 
-func(cf *Classfile) parseAndCheckVersion(reader *ClassReader) {
+func (cf *Classfile) parseAndCheckVersion(reader *ClassReader) {
 	cf.MinorVersion = reader.readUint16()
 	cf.MajorVersion = reader.readUint16()
 	if cf.MajorVersion > supportVersion {
@@ -92,3 +93,34 @@ func(cf *Classfile) parseAndCheckVersion(reader *ClassReader) {
 	}
 }
 
+func (cf *Classfile) GetClassName() string {
+	return cf.GetClassNameOf(cf.ThisClass)
+}
+
+func (cf *Classfile) GetSuperClass() string {
+	return cf.GetClassNameOf(cf.SuperClass)
+}
+
+func (cf *Classfile) GetInterfaces() []string {
+	interfaces := make([]string, len(cf.Interfaces))
+	for i, index := range cf.Interfaces {
+		interfaces[i] = cf.GetClassNameOf(index)
+	}
+	return interfaces
+}
+
+func (cf *Classfile) GetConstantInfo(index uint16) ConstantInfo {
+	return cf.ConstPool.getConstantInfo(index)
+}
+
+func (cf *Classfile) GetUTF8(index uint16) string {
+	return cf.ConstPool.getUtf8(index)
+}
+
+func (cf *Classfile) GetClassNameOf(index uint16) string {
+	if index == 0 {
+		return ""
+	}
+	classInfo := cf.ConstPool.getConstantInfo(index).(ConstantClassInfo)
+	return cf.ConstPool.getUtf8(classInfo.NameIndex)
+}

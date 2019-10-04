@@ -19,7 +19,7 @@ func NewClassPath(bootClassPath, applicationClassPath string) *ClassPath {
 	return cp
 }
 
-func(cp *ClassPath) ReadClass(className string) ([]byte, error) {
+func (cp *ClassPath) ReadClass(className string) ([]byte, error) {
 	className = strings.Replace(className, ".", pathSeparator, -1)
 	className += classSuffix
 	return cp.readClass(className)

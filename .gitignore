@@ -8,4 +8,5 @@
 #PROJECT
 go.sum
 jvmgo
+javap
 rt.jar
