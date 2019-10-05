@@ -10,3 +10,5 @@ go.sum
 jvmgo
 javap
 rt.jar
+!/cmd/javap/main.go
+!/cmd/javap
