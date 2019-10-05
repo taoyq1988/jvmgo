@@ -5,6 +5,6 @@ type LocalVars struct {
 }
 
 func newLocalVars(size uint) LocalVars {
-	slots := make([]Slot, 0)
+	slots := make([]Slot, size)
 	return LocalVars{slots: slots}
 }

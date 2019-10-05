@@ -110,30 +110,6 @@ func readConstantValueAttribute(reader *ClassReader) ConstantValueAttribute {
 	}
 }
 
-/******** markers ********/
-
-type MarkerAttribute struct{}
-
-/*
-Deprecated_attribute {
-    u2 attribute_name_index;
-    u4 attribute_length;
-}
-*/
-type DeprecatedAttribute struct {
-	MarkerAttribute
-}
-
-/*
-Synthetic_attribute {
-    u2 attribute_name_index;
-    u4 attribute_length;
-}
-*/
-type SyntheticAttribute struct {
-	MarkerAttribute
-}
-
 /*
 EnclosingMethod_attribute {
     u2 attribute_name_index;
@@ -358,4 +334,28 @@ type SourceFileAttribute struct {
 
 func readSourceFileAttribute(reader *ClassReader) SourceFileAttribute {
 	return SourceFileAttribute{SourceFileIndex: reader.readUint16()}
+}
+
+/******** markers ********/
+
+type MarkerAttribute struct{}
+
+/*
+Deprecated_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+}
+*/
+type DeprecatedAttribute struct {
+	MarkerAttribute
+}
+
+/*
+Synthetic_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+}
+*/
+type SyntheticAttribute struct {
+	MarkerAttribute
 }
