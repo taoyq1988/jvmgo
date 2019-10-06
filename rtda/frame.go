@@ -25,6 +25,22 @@ func newFrame(thread *Thread, method *heap.Method) *Frame {
 	}
 }
 
+func (frame *Frame) Load(idx uint, isL bool) {
+	s := frame.GetLocalVar(idx)
+	frame.Push(s)
+	if isL {
+		frame.PushNull()
+	}
+}
+
+func (frame *Frame) Store(idx uint, isL bool) {
+	if isL {
+		frame.Pop()
+	}
+	s := frame.Pop()
+	frame.SetLocalVar(idx, s)
+}
+
 func (frame *Frame) GetConstantPool() heap.ConstantPool {
 	return frame.method.Class.ConstantPool
 }
