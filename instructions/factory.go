@@ -93,20 +93,26 @@ var (
 	ldiv        = &LDiv{}
 	fdiv        = &FDiv{}
 	ddiv        = &DDiv{}
-	irem = &IRem{}
-	lrem = &LRem{}
-	frem = &FRem{}
-	drem = &DRem{}
-	ineg = &INeg{}
-	lneg = &LNeg{}
-	fneg = &FNeg{}
-	dneg = &DNeg{}
-	ishl = &IShl{}
-	lshl = &LShl{}
-	ishr = &IShr{}
-	lshr = &LShr{}
-	iushr = &IUShr{}
-	lushr = &LUShr{}
+	irem        = &IRem{}
+	lrem        = &LRem{}
+	frem        = &FRem{}
+	drem        = &DRem{}
+	ineg        = &INeg{}
+	lneg        = &LNeg{}
+	fneg        = &FNeg{}
+	dneg        = &DNeg{}
+	ishl        = &IShl{}
+	lshl        = &LShl{}
+	ishr        = &IShr{}
+	lshr        = &LShr{}
+	iushr       = &IUShr{}
+	lushr       = &LUShr{}
+	iand        = &IAnd{}
+	land        = &LAnd{}
+	ior         = &IOr{}
+	lor         = &LOr{}
+	ixor        = &IXor{}
+	lxor        = &LXor{}
 )
 
 func newInstruction(opcode byte) base.Instruction {
@@ -344,7 +350,20 @@ func newInstruction(opcode byte) base.Instruction {
 		return iushr
 	case OpLUshr:
 		return lushr
-
+	case OpIAnd:
+		return iand
+	case OpLAnd:
+		return land
+	case OpIOr:
+		return ior
+	case OpLOr:
+		return lor
+	case OpIXor:
+		return ixor
+	case OpLXor:
+		return lxor
+	case OpIInc:
+		return &IInc{}
 
 	default:
 		return nil
