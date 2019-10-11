@@ -8,19 +8,19 @@ type Frame struct {
 	lower *Frame
 	LocalVars
 	OperandStack
-	thread *Thread
-	method *heap.Method
+	thread    *Thread
+	method    *heap.Method
 	maxLocals uint
-	maxStack uint
+	maxStack  uint
 }
 
 func newFrame(thread *Thread, method *heap.Method) *Frame {
 	return &Frame{
-		thread:thread,
-		method:method,
-		maxLocals:method.MaxLocals,
-		maxStack:method.MaxStack,
-		LocalVars: newLocalVars(method.MaxLocals),
+		thread:       thread,
+		method:       method,
+		maxLocals:    method.MaxLocals,
+		maxStack:     method.MaxStack,
+		LocalVars:    newLocalVars(method.MaxLocals),
 		OperandStack: newOperandStack(method.MaxStack),
 	}
 }

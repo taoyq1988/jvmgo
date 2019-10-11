@@ -55,7 +55,7 @@ func (dup *Dup2) Execute(frame *rtda.Frame) {
 }
 
 // Duplicate the top one or two operand stack values and insert two or three values down
-type Dup2X1 struct{
+type Dup2X1 struct {
 	base.NoOperandsInstruction
 }
 
@@ -71,7 +71,7 @@ func (instr *Dup2X1) Execute(frame *rtda.Frame) {
 }
 
 // Duplicate the top one or two operand stack values and insert two, three, or four values down
-type Dup2X2 struct{
+type Dup2X2 struct {
 	base.NoOperandsInstruction
 }
 

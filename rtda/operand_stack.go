@@ -38,3 +38,33 @@ func (stack *OperandStack) PushInt(val int32) {
 func (stack *OperandStack) PopInt() int32 {
 	return stack.Pop().IntValue()
 }
+
+// PushLong long or double need two slots
+func (stack *OperandStack) PushLong(val int64) {
+	stack.Push(heap.NewLongSlot(val))
+	//fixme: change to pushnull
+	stack.size++
+}
+
+func (stack *OperandStack) PopLong() int64 {
+	stack.size--
+	return stack.Pop().LongValue()
+}
+
+func (stack *OperandStack) PushFloat(val float32) {
+	stack.Push(heap.NewFloatSlot(val))
+}
+
+func (stack *OperandStack) PopFloat() float32 {
+	return stack.Pop().FloatValue()
+}
+
+func (stack *OperandStack) PushDouble(val float64) {
+	stack.Push(heap.NewDoubleSlot(val))
+	stack.size++
+}
+
+func (stack *OperandStack) PopDouble() float64 {
+	stack.size--
+	return stack.Pop().DoubleValue()
+}

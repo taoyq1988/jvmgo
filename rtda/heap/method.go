@@ -2,6 +2,6 @@ package heap
 
 type Method struct {
 	ClassMember
-	MaxStack uint
+	MaxStack  uint
 	MaxLocals uint
 }

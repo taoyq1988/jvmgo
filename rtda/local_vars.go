@@ -1,5 +1,7 @@
 package rtda
 
+import "github.com/taoyq1988/jvmgo/rtda/heap"
+
 type LocalVars struct {
 	slots []Slot
 }
@@ -15,4 +17,12 @@ func (localVars *LocalVars) GetLocalVar(idx uint) Slot {
 
 func (localVars *LocalVars) SetLocalVar(idx uint, slot Slot) {
 	localVars.slots[idx] = slot
+}
+
+func (localVars *LocalVars) GetIntVar(idx uint) int32 {
+	return localVars.GetLocalVar(idx).IntValue()
+}
+
+func (localVars *LocalVars) SetIntVar(idx uint, val int32) {
+	localVars.SetLocalVar(idx, heap.NewIntSlot(val))
 }

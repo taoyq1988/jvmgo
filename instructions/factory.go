@@ -4,6 +4,7 @@ import (
 	"github.com/taoyq1988/jvmgo/instructions/base"
 	. "github.com/taoyq1988/jvmgo/instructions/constants"
 	. "github.com/taoyq1988/jvmgo/instructions/loads"
+	. "github.com/taoyq1988/jvmgo/instructions/math"
 	. "github.com/taoyq1988/jvmgo/instructions/stack"
 	. "github.com/taoyq1988/jvmgo/instructions/stores"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
@@ -27,55 +28,85 @@ var (
 	fconst_2    = &Const{K: heap.NewFloatSlot(2.0)}
 	dconst_0    = &Const{K: heap.NewDoubleSlot(0.0), L: true}
 	dconst_1    = &Const{K: heap.NewDoubleSlot(1.0), L: true}
-	iload_0 = &LoadN{N: 0}
-	iload_1 = &LoadN{N: 1}
-	iload_2 = &LoadN{N: 2}
-	iload_3 = &LoadN{N: 3}
-	lload_0 = &LoadN{N: 0, L: true}
-	lload_1 = &LoadN{N: 1, L: true}
-	lload_2 = &LoadN{N: 2, L: true}
-	lload_3 = &LoadN{N: 3, L: true}
-	fload_0 = &LoadN{N: 0}
-	fload_1 = &LoadN{N: 1}
-	fload_2 = &LoadN{N: 2}
-	fload_3 = &LoadN{N: 3}
-	dload_0 = &LoadN{N: 0, L: true}
-	dload_1 = &LoadN{N: 1, L: true}
-	dload_2 = &LoadN{N: 2, L: true}
-	dload_3 = &LoadN{N: 3, L: true}
-	aload_0 = &LoadN{N: 0}
-	aload_1 = &LoadN{N: 1}
-	aload_2 = &LoadN{N: 2}
-	aload_3 = &LoadN{N: 3}
-	istore_0 = &StoreX{X: 0}
-	istore_1 = &StoreX{X: 1}
-	istore_2 = &StoreX{X: 2}
-	istore_3 = &StoreX{X: 3}
-	lstore_0 = &StoreX{X: 0, L:true}
-	lstore_1 = &StoreX{X: 1, L:true}
-	lstore_2 = &StoreX{X: 2, L:true}
-	lstore_3 = &StoreX{X: 3, L:true}
-	fstore_0 = &StoreX{X: 0}
-	fstore_1 = &StoreX{X: 1}
-	fstore_2 = &StoreX{X: 2}
-	fstore_3 = &StoreX{X: 3}
-	dstore_0 = &StoreX{X:0, L:true}
-	dstore_1 = &StoreX{X:1, L:true}
-	dstore_2 = &StoreX{X:2, L:true}
-	dstore_3 = &StoreX{X:3, L:true}
-	astore_0 = &StoreX{X:0}
-	astore_1 = &StoreX{X:1}
-	astore_2 = &StoreX{X:2}
-	astore_3 = &StoreX{X:3}
-	pop = &Pop{}
-	pop2 = &Pop2{}
-	dup = &Dup{}
-	dupx1 = &DupX1{}
-	dupx2 = &DupX2{}
-	dup2 = &Dup2{}
-	dup2x1 = &Dup2X1{}
-	dup2x2 = &Dup2X2{}
-	swap = &Swap{}
+	iload_0     = &LoadN{N: 0}
+	iload_1     = &LoadN{N: 1}
+	iload_2     = &LoadN{N: 2}
+	iload_3     = &LoadN{N: 3}
+	lload_0     = &LoadN{N: 0, L: true}
+	lload_1     = &LoadN{N: 1, L: true}
+	lload_2     = &LoadN{N: 2, L: true}
+	lload_3     = &LoadN{N: 3, L: true}
+	fload_0     = &LoadN{N: 0}
+	fload_1     = &LoadN{N: 1}
+	fload_2     = &LoadN{N: 2}
+	fload_3     = &LoadN{N: 3}
+	dload_0     = &LoadN{N: 0, L: true}
+	dload_1     = &LoadN{N: 1, L: true}
+	dload_2     = &LoadN{N: 2, L: true}
+	dload_3     = &LoadN{N: 3, L: true}
+	aload_0     = &LoadN{N: 0}
+	aload_1     = &LoadN{N: 1}
+	aload_2     = &LoadN{N: 2}
+	aload_3     = &LoadN{N: 3}
+	istore_0    = &StoreX{X: 0}
+	istore_1    = &StoreX{X: 1}
+	istore_2    = &StoreX{X: 2}
+	istore_3    = &StoreX{X: 3}
+	lstore_0    = &StoreX{X: 0, L: true}
+	lstore_1    = &StoreX{X: 1, L: true}
+	lstore_2    = &StoreX{X: 2, L: true}
+	lstore_3    = &StoreX{X: 3, L: true}
+	fstore_0    = &StoreX{X: 0}
+	fstore_1    = &StoreX{X: 1}
+	fstore_2    = &StoreX{X: 2}
+	fstore_3    = &StoreX{X: 3}
+	dstore_0    = &StoreX{X: 0, L: true}
+	dstore_1    = &StoreX{X: 1, L: true}
+	dstore_2    = &StoreX{X: 2, L: true}
+	dstore_3    = &StoreX{X: 3, L: true}
+	astore_0    = &StoreX{X: 0}
+	astore_1    = &StoreX{X: 1}
+	astore_2    = &StoreX{X: 2}
+	astore_3    = &StoreX{X: 3}
+	pop         = &Pop{}
+	pop2        = &Pop2{}
+	dup         = &Dup{}
+	dupx1       = &DupX1{}
+	dupx2       = &DupX2{}
+	dup2        = &Dup2{}
+	dup2x1      = &Dup2X1{}
+	dup2x2      = &Dup2X2{}
+	swap        = &Swap{}
+	iadd        = &IAdd{}
+	ladd        = &LAdd{}
+	fadd        = &FAdd{}
+	dadd        = &DAdd{}
+	isub        = &ISub{}
+	lsub        = &LSub{}
+	fsub        = &FSub{}
+	dsub        = &DSub{}
+	imul        = &IMul{}
+	lmul        = &LMul{}
+	fmul        = &FMul{}
+	dmul        = &DMul{}
+	idiv        = &IDiv{}
+	ldiv        = &LDiv{}
+	fdiv        = &FDiv{}
+	ddiv        = &DDiv{}
+	irem = &IRem{}
+	lrem = &LRem{}
+	frem = &FRem{}
+	drem = &DRem{}
+	ineg = &INeg{}
+	lneg = &LNeg{}
+	fneg = &FNeg{}
+	dneg = &DNeg{}
+	ishl = &IShl{}
+	lshl = &LShl{}
+	ishr = &IShr{}
+	lshr = &LShr{}
+	iushr = &IUShr{}
+	lushr = &LUShr{}
 )
 
 func newInstruction(opcode byte) base.Instruction {
@@ -253,6 +284,67 @@ func newInstruction(opcode byte) base.Instruction {
 		return dup2x2
 	case OpSwap:
 		return swap
+	case OpIAdd:
+		return iadd
+	case OpLAdd:
+		return ladd
+	case OpFAdd:
+		return fadd
+	case OpDAdd:
+		return dadd
+	case OpISub:
+		return isub
+	case OpLSub:
+		return lsub
+	case OpFSub:
+		return fsub
+	case OpDSub:
+		return dsub
+	case OpIMul:
+		return imul
+	case OpLMul:
+		return lmul
+	case OpFMul:
+		return fmul
+	case OpDMul:
+		return dmul
+	case OpIDiv:
+		return idiv
+	case OpLDiv:
+		return ldiv
+	case OpFDiv:
+		return fdiv
+	case OpDDiv:
+		return ddiv
+	case OpIRem:
+		return irem
+	case OpLRem:
+		return lrem
+	case OpFRem:
+		return frem
+	case OpDRem:
+		return drem
+	case OpINeg:
+		return ineg
+	case OpLNeg:
+		return lneg
+	case OpFNeg:
+		return fneg
+	case OpDNeg:
+		return dneg
+	case OpIShl:
+		return ishl
+	case OpLShl:
+		return lshl
+	case OpIShr:
+		return ishr
+	case OpLShr:
+		return lshr
+	case OpIUshr:
+		return iushr
+	case OpLUshr:
+		return lushr
+
 
 	default:
 		return nil
