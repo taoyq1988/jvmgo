@@ -3,6 +3,7 @@ package instructions
 import (
 	"github.com/taoyq1988/jvmgo/instructions/base"
 	. "github.com/taoyq1988/jvmgo/instructions/constants"
+	. "github.com/taoyq1988/jvmgo/instructions/convert"
 	. "github.com/taoyq1988/jvmgo/instructions/loads"
 	. "github.com/taoyq1988/jvmgo/instructions/math"
 	. "github.com/taoyq1988/jvmgo/instructions/stack"
@@ -113,6 +114,21 @@ var (
 	lor         = &LOr{}
 	ixor        = &IXor{}
 	lxor        = &LXor{}
+	i2l         = &I2L{}
+	i2f         = &I2F{}
+	i2d         = &I2D{}
+	l2i         = &L2I{}
+	l2f         = &L2F{}
+	l2d         = &L2D{}
+	f2i         = &F2I{}
+	f2l         = &F2L{}
+	f2d         = &F2D{}
+	d2i         = &D2I{}
+	d2l         = &D2L{}
+	d2f         = &D2F{}
+	i2b         = &I2B{}
+	i2c         = &I2C{}
+	i2S         = &I2S{}
 )
 
 func newInstruction(opcode byte) base.Instruction {
@@ -364,6 +380,36 @@ func newInstruction(opcode byte) base.Instruction {
 		return lxor
 	case OpIInc:
 		return &IInc{}
+	case OpI2L:
+		return i2l
+	case OpI2F:
+		return i2f
+	case OpI2D:
+		return i2d
+	case OpL2I:
+		return l2i
+	case OpL2F:
+		return l2f
+	case OpL2D:
+		return l2d
+	case OpF2I:
+		return f2i
+	case OpF2L:
+		return f2l
+	case OpF2D:
+		return f2d
+	case OpD2I:
+		return d2i
+	case OpD2L:
+		return d2l
+	case OpD2F:
+		return d2f
+	case OpI2B:
+		return i2b
+	case OpI2C:
+		return i2c
+	case OpI2S:
+		return i2S
 
 	default:
 		return nil
