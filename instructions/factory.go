@@ -2,6 +2,7 @@ package instructions
 
 import (
 	"github.com/taoyq1988/jvmgo/instructions/base"
+	. "github.com/taoyq1988/jvmgo/instructions/compare"
 	. "github.com/taoyq1988/jvmgo/instructions/constants"
 	. "github.com/taoyq1988/jvmgo/instructions/convert"
 	. "github.com/taoyq1988/jvmgo/instructions/loads"
@@ -129,6 +130,11 @@ var (
 	i2b         = &I2B{}
 	i2c         = &I2C{}
 	i2S         = &I2S{}
+	lcmp        = &LCmp{}
+	fcmpl       = &FCmpL{}
+	fcmpg       = &FCmpG{}
+	dcmpl       = &DCmpL{}
+	dcmpg       = &DCmpG{}
 )
 
 func newInstruction(opcode byte) base.Instruction {
@@ -410,6 +416,44 @@ func newInstruction(opcode byte) base.Instruction {
 		return i2c
 	case OpI2S:
 		return i2S
+	case OpLCmp:
+		return lcmp
+	case OpFCmpL:
+		return fcmpl
+	case OpFCmpG:
+		return fcmpg
+	case OpDCmpL:
+		return dcmpl
+	case OpDCmpG:
+		return dcmpg
+	case OpIfEQ:
+		return &IfEQ{}
+	case OpIfNE:
+		return &IfNE{}
+	case OpIfLT:
+		return &IfLT{}
+	case OpIfGE:
+		return &IfGE{}
+	case OpIfGT:
+		return &IfGT{}
+	case OpIfLE:
+		return &IfLE{}
+	case OpIfICmpEQ:
+		return &IfICmpEQ{}
+	case OpIfICmpNE:
+		return &IfICmpNE{}
+	case OpIfICmpLT:
+		return &IfICmpLT{}
+	case OpIfICmpGE:
+		return &IfICmpGE{}
+	case OpIfICmpGT:
+		return &IfICmpGT{}
+	case OpIfICmpLE:
+		return &IfICmpLE{}
+	case OpIfACmpEQ:
+		return &IfACmpEQ{}
+	case OpIfACmpNE:
+		return &IfACmpNE{}
 
 	default:
 		return nil

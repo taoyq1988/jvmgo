@@ -14,7 +14,7 @@ JVM
         OperandStack
 */
 type Thread struct {
-	pc    int
+	PC    int
 	stack *Stack
 }
 

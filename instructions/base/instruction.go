@@ -37,3 +37,7 @@ type Index16Instruction struct {
 func (instr *Index16Instruction) FetchOperands(reader *CodeReader) {
 	instr.Index = uint(reader.ReadUint16())
 }
+
+func Branch(frame *rtda.Frame, offset int) {
+	frame.NextPC = frame.Thread.PC + offset
+}

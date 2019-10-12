@@ -42,7 +42,6 @@ func (stack *OperandStack) PopInt() int32 {
 // PushLong long or double need two slots
 func (stack *OperandStack) PushLong(val int64) {
 	stack.Push(heap.NewLongSlot(val))
-	//fixme: change to pushnull
 	stack.size++
 }
 
@@ -67,4 +66,12 @@ func (stack *OperandStack) PushDouble(val float64) {
 func (stack *OperandStack) PopDouble() float64 {
 	stack.size--
 	return stack.Pop().DoubleValue()
+}
+
+func (stack *OperandStack) PushRef(ref *heap.Object) {
+	stack.Push(heap.NewRefSlot(ref))
+}
+
+func (stack *OperandStack) PopRef() *heap.Object {
+	return stack.Pop().Ref
 }
