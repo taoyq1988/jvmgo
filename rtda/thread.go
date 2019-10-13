@@ -23,3 +23,15 @@ func NewThread() *Thread {
 		stack: newStack(defaultStackMaxSize),
 	}
 }
+
+func (thread *Thread) TopFrame() *Frame {
+	return thread.stack.top()
+}
+
+func (thread *Thread) PopFrame() *Frame {
+	top := thread.stack.pop()
+	if top.OnPopAction != nil {
+		top.OnPopAction()
+	}
+	return top
+}

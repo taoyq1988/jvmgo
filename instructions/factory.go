@@ -4,6 +4,7 @@ import (
 	"github.com/taoyq1988/jvmgo/instructions/base"
 	. "github.com/taoyq1988/jvmgo/instructions/compare"
 	. "github.com/taoyq1988/jvmgo/instructions/constants"
+	. "github.com/taoyq1988/jvmgo/instructions/control"
 	. "github.com/taoyq1988/jvmgo/instructions/convert"
 	. "github.com/taoyq1988/jvmgo/instructions/loads"
 	. "github.com/taoyq1988/jvmgo/instructions/math"
@@ -135,6 +136,12 @@ var (
 	fcmpg       = &FCmpG{}
 	dcmpl       = &DCmpL{}
 	dcmpg       = &DCmpG{}
+	ireturn     = &IReturn{}
+	lreturn     = &LReturn{}
+	freturn     = &FReturn{}
+	dreturn     = &DReturn{}
+	areturn     = &AReturn{}
+	_return     = &Return{}
 )
 
 func newInstruction(opcode byte) base.Instruction {
@@ -454,6 +461,28 @@ func newInstruction(opcode byte) base.Instruction {
 		return &IfACmpEQ{}
 	case OpIfACmpNE:
 		return &IfACmpNE{}
+	case OpGoto:
+		return &Goto{}
+	case OpJSR:
+		return &Jsr{}
+	case OpRET:
+		return &Ret{}
+	case OpTableSwitch:
+		return &TableSwitch{}
+	case OpLookupSwitch:
+		return &LookupSwitch{}
+	case OpIReturn:
+		return ireturn
+	case OpLReturn:
+		return lreturn
+	case OpFReturn:
+		return freturn
+	case OpDReturn:
+		return dreturn
+	case OpAReturn:
+		return areturn
+	case OpReturn:
+		return _return
 
 	default:
 		return nil

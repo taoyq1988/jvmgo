@@ -8,11 +8,12 @@ type Frame struct {
 	lower *Frame
 	LocalVars
 	OperandStack
-	Thread    *Thread
-	Method    *heap.Method
-	maxLocals uint
-	maxStack  uint
-	NextPC    int
+	Thread      *Thread
+	Method      *heap.Method
+	maxLocals   uint
+	maxStack    uint
+	NextPC      int
+	OnPopAction func()
 }
 
 func newFrame(thread *Thread, method *heap.Method) *Frame {
@@ -43,5 +44,5 @@ func (frame *Frame) Store(idx uint, isL bool) {
 }
 
 func (frame *Frame) GetConstantPool() heap.ConstantPool {
-	return frame.method.Class.ConstantPool
+	return frame.Method.Class.ConstantPool
 }
