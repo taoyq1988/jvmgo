@@ -39,3 +39,14 @@ func (mi *MemberInfo) read(reader *ClassReader) {
 	mi.DescriptorIndex = reader.readUint16()
 	mi.attributes = readAttributes(reader)
 }
+
+func (mi *MemberInfo) CodeAttribute() *CodeAttribute {
+	for _, attr := range mi.attributes {
+		switch attr.(type) {
+		case CodeAttribute:
+			a := attr.(CodeAttribute)
+			return &a
+		}
+	}
+	return nil
+}

@@ -54,3 +54,7 @@ func (reader *CodeReader) SkipPadding() {
 		reader.ReadUint8()
 	}
 }
+
+func (reader *CodeReader) Reset(pc int) {
+	reader.pc = pc
+}

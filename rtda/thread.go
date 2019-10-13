@@ -35,3 +35,11 @@ func (thread *Thread) PopFrame() *Frame {
 	}
 	return top
 }
+
+func (thread *Thread) PushFrame(frame *Frame) {
+	thread.stack.push(frame)
+}
+
+func (self *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
+	return newFrameTmp(self, maxLocals, maxStack)
+}

@@ -11,3 +11,4 @@ javap
 rt.jar
 !/cmd/javap/main.go
 !/cmd/javap
+*.class

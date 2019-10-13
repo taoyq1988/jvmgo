@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"github.com/taoyq1988/jvmgo/classfile"
 	"github.com/taoyq1988/jvmgo/classpath"
+	"github.com/taoyq1988/jvmgo/interpret"
 	"github.com/taoyq1988/jvmgo/options"
 	"os"
+	"strings"
 )
 
 const (
@@ -19,10 +22,8 @@ func main() {
 		printUsage()
 	} else if opts.Version {
 		printVersion()
-	} else if opts.Classpath != "" {
-		cp := classpath.NewClassPath(opts.BootJarPath, opts.Classpath)
-		d, _ := cp.ReadClass("java.lang.Object")
-		fmt.Println(hex.EncodeToString(d))
+	} else {
+		startJVM(opts, args[0], args[1:])
 	}
 }
 
@@ -33,4 +34,31 @@ func printUsage() {
 
 func printVersion() {
 	fmt.Println(version)
+}
+
+func startJVM(opts options.Options, mainClass string, args []string) {
+	cp := classpath.NewClassPath(opts.BootJarPath, opts.Classpath)
+	className := strings.Replace(mainClass, ".", "/", -1)
+	cf := loadClass(className, cp)
+	mainInfo := getMainMethodInfo(cf)
+	interpret.Interpret(&mainInfo)
+}
+
+func loadClass(className string, classpath *classpath.ClassPath) *classfile.Classfile {
+	classData, _ := classpath.ReadClass(className)
+	fmt.Println("code", hex.EncodeToString(classData))
+	cf, _ := classfile.Parse(classData)
+	return cf
+}
+
+func getMainMethodInfo(cf *classfile.Classfile) classfile.MemberInfo {
+	for _, m := range cf.Methods {
+		mName := cf.GetConstantInfo(m.NameIndex).(string)
+		fmt.Println(mName)
+		if mName == "main" {
+			fmt.Println("get main method")
+			return m
+		}
+	}
+	return classfile.MemberInfo{}
 }

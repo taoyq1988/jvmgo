@@ -146,7 +146,7 @@ var (
 	_return     = &Return{}
 )
 
-func newInstruction(opcode byte) base.Instruction {
+func NewInstruction(opcode byte) base.Instruction {
 	switch opcode {
 	case OpNop:
 		return nop

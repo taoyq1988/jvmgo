@@ -46,3 +46,13 @@ func (frame *Frame) Store(idx uint, isL bool) {
 func (frame *Frame) GetConstantPool() heap.ConstantPool {
 	return frame.Method.Class.ConstantPool
 }
+
+func newFrameTmp(thread *Thread, maxLocals, maxStack uint) *Frame {
+	return &Frame{
+		Thread:       thread,
+		LocalVars:    newLocalVars(maxLocals),
+		OperandStack: newOperandStack(maxStack),
+		maxLocals:    maxLocals,
+		maxStack:     maxStack,
+	}
+}
