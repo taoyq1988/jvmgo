@@ -1,12 +1,13 @@
 package extended
 
 import (
-	"github.com/zxh0/jvm.go/instructions/base"
-	"github.com/zxh0/jvm.go/instructions/control"
-	"github.com/zxh0/jvm.go/instructions/loads"
-	"github.com/zxh0/jvm.go/instructions/math"
-	"github.com/zxh0/jvm.go/instructions/stores"
-	"github.com/zxh0/jvm.go/rtda"
+	"github.com/taoyq1988/jvmgo/instructions/base"
+	"github.com/taoyq1988/jvmgo/instructions/control"
+	"github.com/taoyq1988/jvmgo/instructions/loads"
+	"github.com/taoyq1988/jvmgo/instructions/math"
+	. "github.com/taoyq1988/jvmgo/instructions/options"
+	"github.com/taoyq1988/jvmgo/instructions/stores"
+	"github.com/taoyq1988/jvmgo/rtda"
 )
 
 // Extend local variable index by additional bytes
@@ -17,27 +18,27 @@ type Wide struct {
 func (instr *Wide) FetchOperands(reader *base.CodeReader) {
 	opcode := reader.ReadUint8()
 	switch opcode {
-	case 0x15, 0x17, 0x19:
+	case OpILoad, OpFLoad, OpALoad:
 		inst := &loads.Load{}
 		inst.Index = uint(reader.ReadUint16())
 		instr.modifiedInstruction = inst
-	case 0x16, 0x18:
+	case OpLLoad, OpDLoad:
 		inst := &loads.Load{L: true}
 		inst.Index = uint(reader.ReadUint16())
 		instr.modifiedInstruction = inst
-	case 0x36, 0x38, 0x3a:
+	case OpIStore, OpFStore, OpAStore:
 		inst := &stores.Store{}
 		inst.Index = uint(reader.ReadUint16())
 		instr.modifiedInstruction = inst
-	case 0x37, 0x39:
+	case OpLStore, OpDStore:
 		inst := &stores.Store{L: true}
 		inst.Index = uint(reader.ReadUint16())
 		instr.modifiedInstruction = inst
-	case 0xa9:
-		inst := &control.RET{}
+	case OpRET:
+		inst := &control.Ret{}
 		inst.Index = uint(reader.ReadUint16())
 		instr.modifiedInstruction = inst
-	case 0x84:
+	case OpIInc:
 		inst := &math.IInc{}
 		inst.Index = uint(reader.ReadUint16())
 		inst.Const = int32(reader.ReadInt16())

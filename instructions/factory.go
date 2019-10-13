@@ -6,8 +6,10 @@ import (
 	. "github.com/taoyq1988/jvmgo/instructions/constants"
 	. "github.com/taoyq1988/jvmgo/instructions/control"
 	. "github.com/taoyq1988/jvmgo/instructions/convert"
+	. "github.com/taoyq1988/jvmgo/instructions/extend"
 	. "github.com/taoyq1988/jvmgo/instructions/loads"
 	. "github.com/taoyq1988/jvmgo/instructions/math"
+	. "github.com/taoyq1988/jvmgo/instructions/options"
 	. "github.com/taoyq1988/jvmgo/instructions/stack"
 	. "github.com/taoyq1988/jvmgo/instructions/stores"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
@@ -483,8 +485,19 @@ func newInstruction(opcode byte) base.Instruction {
 		return areturn
 	case OpReturn:
 		return _return
+	case OpWide:
+		return &Wide{}
+	case OpIfNull:
+		return &IfNull{}
+	case OpIfNonNull:
+		return &IfNonNull{}
+	case OpGotoW:
+		return &GotoW{}
+	case OpJSRw:
+		return &JsrW{}
+	//case OpBreakpoint: //todo
 
 	default:
-		return nil
+		panic("invalid opcode")
 	}
 }

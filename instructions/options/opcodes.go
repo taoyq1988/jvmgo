@@ -1,4 +1,4 @@
-package instructions
+package options
 
 const (
 	OpNop             = 0x00
