@@ -1,7 +1,6 @@
 package base
 
 import (
-	"fmt"
 	"github.com/taoyq1988/jvmgo/rtda"
 )
 
@@ -43,5 +42,4 @@ func (instr *Index16Instruction) FetchOperands(reader *CodeReader) {
 
 func Branch(frame *rtda.Frame, offset int) {
 	frame.NextPC = frame.Thread.PC + offset
-	fmt.Println("frame.NextPC", frame.NextPC)
 }
