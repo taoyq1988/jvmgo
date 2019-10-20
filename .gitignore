@@ -12,3 +12,5 @@ rt.jar
 !/cmd/javap/main.go
 !/cmd/javap
 *.class
+testjava
+!testjava/*.java
