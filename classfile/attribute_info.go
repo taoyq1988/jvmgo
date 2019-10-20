@@ -1,21 +1,5 @@
 package classfile
 
-const (
-	bootStrapMethods       = "BootstrapMethods"
-	code                   = "Code"
-	constantValue          = "ConstantValue"
-	deprecated             = "Deprecated"
-	enclosingMethod        = "EnclosingMethod"
-	exceptions             = "Exceptions"
-	innerClasses           = "InnerClasses"
-	lineNumberTable        = "LineNumberTable"
-	localVariableTable     = "LocalVariableTable"
-	localVariableTypeTable = "LocalVariableTypeTable"
-	signature              = "Signature"
-	sourceFile             = "SourceFile"
-	synthetic              = "Synthetic"
-)
-
 /*
 attribute_info {
     u2 attribute_name_index;
@@ -32,52 +16,47 @@ type UnparsedAttribute struct {
 }
 
 func readAttributes(reader *ClassReader) []AttributeInfo {
-	attributesCount := reader.readUint16()
-	attributes := make([]AttributeInfo, attributesCount)
-	for i := range attributes {
-		attributes[i] = readAttributeInfo(reader)
-	}
-	return attributes
+	return reader.readTable(readAttributeInfo).([]AttributeInfo)
 }
 
 func readAttributeInfo(reader *ClassReader) AttributeInfo {
-	attrNameIndex := reader.readUint16()
-	attrLen := reader.readUint32()
-	attrName := reader.cp.getUtf8(attrNameIndex)
+	attrNameIndex := reader.ReadUint16()
+	attrLen := reader.ReadUint32()
+	attrName := reader.cf.getUtf8(attrNameIndex)
 
 	switch attrName {
-	case bootStrapMethods:
+	case BootstrapMethods:
 		return readBootstrapMethodsAttribute(reader)
-	case code:
+	case Code:
 		return readCodeAttribute(reader)
-	case constantValue:
+	case ConstantValue:
 		return readConstantValueAttribute(reader)
-	case deprecated:
+	case Deprecated:
 		return DeprecatedAttribute{}
-	case enclosingMethod:
+	case EnclosingMethod:
 		return readEnclosingMethodAttribute(reader)
-	case exceptions:
+	case Exceptions:
 		return readExceptionsAttribute(reader)
-	case innerClasses:
+	case InnerClasses:
 		return readInnerClassesAttribute(reader)
-	case lineNumberTable:
+	case LineNumberTable:
 		return readLineNumberTableAttribute(reader)
-	case localVariableTable:
+	case LocalVariableTable:
 		return readLocalVariableTableAttribute(reader)
-	case localVariableTypeTable:
+	case LocalVariableTypeTable:
 		return readLocalVariableTypeTableAttribute(reader)
-	case signature:
+	case Signature:
 		return readSignatureAttribute(reader)
-	case sourceFile:
+	case SourceFile:
 		return readSourceFileAttribute(reader)
-	case synthetic:
+	case Synthetic:
 		return SyntheticAttribute{}
 	default:
 		// undefined attr
 		return UnparsedAttribute{
 			Name:   attrName,
 			Length: attrLen,
-			Info:   reader.readBytes(attrLen),
+			Info:   reader.ReadBytes(int(attrLen)),
 		}
 	}
 }

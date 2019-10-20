@@ -30,7 +30,7 @@ func printClassInfo(opts options.Options, className string) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("class:", class.GetClassName(), ", access flag:", class.AccessFlags)
-	fmt.Println("super class:", class.GetSuperClass())
-	fmt.Println("interfaces:", class.GetInterfaces())
+	fmt.Println("class:", class.GetThisClassName(), ", access flag:", class.AccessFlags)
+	fmt.Println("super class:", class.GetSuperClassName())
+	fmt.Println("interfaces:", class.GetInterfaceNames())
 }

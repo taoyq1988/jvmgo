@@ -8,7 +8,7 @@ import (
 )
 
 func TestA(t *testing.T) {
-	d := []byte{0,13}
+	d := []byte{0, 13}
 	a, err := bytesToIntU(d)
 	if err != nil {
 		t.Error(err)
@@ -17,7 +17,7 @@ func TestA(t *testing.T) {
 }
 
 func TestB(t *testing.T) {
-	d := []byte{0,13}
+	d := []byte{0, 13}
 	a, err := bytesToIntS(d)
 	if err != nil {
 		t.Error(err)
@@ -28,7 +28,7 @@ func TestB(t *testing.T) {
 //字节数(大端)组转成int(无符号的)
 func bytesToIntU(b []byte) (int, error) {
 	if len(b) == 3 {
-		b = append([]byte{0},b...)
+		b = append([]byte{0}, b...)
 	}
 	bytesBuffer := bytes.NewBuffer(b)
 	switch len(b) {
@@ -45,16 +45,14 @@ func bytesToIntU(b []byte) (int, error) {
 		err := binary.Read(bytesBuffer, binary.BigEndian, &tmp)
 		return int(tmp), err
 	default:
-		return 0,fmt.Errorf("%s", "BytesToInt bytes lenth is invaild!")
+		return 0, fmt.Errorf("%s", "BytesToInt bytes lenth is invaild!")
 	}
 }
-
-
 
 //字节数(大端)组转成int(有符号)
 func bytesToIntS(b []byte) (int, error) {
 	if len(b) == 3 {
-		b = append([]byte{0},b...)
+		b = append([]byte{0}, b...)
 	}
 	bytesBuffer := bytes.NewBuffer(b)
 	switch len(b) {
@@ -71,6 +69,6 @@ func bytesToIntS(b []byte) (int, error) {
 		err := binary.Read(bytesBuffer, binary.BigEndian, &tmp)
 		return int(tmp), err
 	default:
-		return 0,fmt.Errorf("%s", "BytesToInt bytes lenth is invaild!")
+		return 0, fmt.Errorf("%s", "BytesToInt bytes lenth is invaild!")
 	}
 }

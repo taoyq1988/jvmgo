@@ -1,57 +1,47 @@
 package classfile
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+	"github.com/taoyq1988/jvmgo/vmutils"
+	"reflect"
+)
 
 type ClassReader struct {
-	data []byte
-	cp   *ConstantPool
+	vmutils.BytesReader
+	cf   *Classfile
 }
 
 func newClassReader(data []byte) *ClassReader {
+	br := vmutils.NewBytesReader(data, binary.BigEndian)
 	return &ClassReader{
-		data: data,
+		BytesReader:br,
 	}
 }
 
-// u1
-func (reader *ClassReader) readUint8() uint8 {
-	val := reader.data[0]
-	reader.data = reader.data[1:]
-	return val
-}
-
-// u2
-func (reader *ClassReader) readUint16() uint16 {
-	val := binary.BigEndian.Uint16(reader.data)
-	reader.data = reader.data[2:]
-	return val
-}
-
-// u4
-func (reader *ClassReader) readUint32() uint32 {
-	val := binary.BigEndian.Uint32(reader.data)
-	reader.data = reader.data[4:]
-	return val
-}
-
-// u8
-func (reader *ClassReader) readUint64() uint64 {
-	val := binary.BigEndian.Uint64(reader.data)
-	reader.data = reader.data[8:]
-	return val
-}
-
 func (reader *ClassReader) readUint16s() []uint16 {
-	n := reader.readUint16()
+	n := reader.ReadUint16()
 	s := make([]uint16, n)
 	for i := range s {
-		s[i] = reader.readUint16()
+		s[i] = reader.ReadUint16()
 	}
 	return s
 }
 
-func (reader *ClassReader) readBytes(length uint32) []byte {
-	bytes := reader.data[:length]
-	reader.data = reader.data[length:]
-	return bytes
+// readFn: func(reader *ClassReader) XXX
+func (reader *ClassReader) readTable(readFn interface{}) interface{} {
+	n := int(reader.ReadUint16())
+
+	itemType := reflect.TypeOf(readFn).Out(0)
+	sliceType := reflect.SliceOf(itemType)
+	s := reflect.MakeSlice(sliceType, n, n) // make([]x, n, n)
+
+	readFnVal := reflect.ValueOf(readFn)
+	args := []reflect.Value{reflect.ValueOf(reader)}
+
+	for i := 0; i < n; i++ {
+		x := readFnVal.Call(args)[0]
+		s.Index(i).Set(x) // s[i] = x
+	}
+
+	return s.Interface()
 }

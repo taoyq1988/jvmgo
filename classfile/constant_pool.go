@@ -29,7 +29,7 @@ cp_info {
 type ConstantInfo interface{}
 
 func readConstantInfo(reader *ClassReader) ConstantInfo {
-	tag := reader.readUint8()
+	tag := reader.ReadUint8()
 	switch tag {
 	case ConstantInteger:
 		return readConstantIntegerInfo(reader)
@@ -62,12 +62,10 @@ func readConstantInfo(reader *ClassReader) ConstantInfo {
 	}
 }
 
-type ConstantPool struct {
-	Infos []ConstantInfo
-}
+type ConstantPool []ConstantInfo
 
 func parseConstantPool(reader *ClassReader) ConstantPool {
-	cpCount := int(reader.readUint16())
+	cpCount := int(reader.ReadUint16())
 	consts := make([]ConstantInfo, cpCount)
 
 	// The constant_pool table is indexed from 1 to constant_pool_count - 1.
@@ -84,20 +82,5 @@ func parseConstantPool(reader *ClassReader) ConstantPool {
 		}
 	}
 
-	return ConstantPool{Infos: consts}
-}
-
-func (cp *ConstantPool) getConstantInfo(index uint16) ConstantInfo {
-	if cpInfo := cp.Infos[index]; cpInfo == nil {
-		panic(fmt.Errorf("invalid constant pool index: %d", index))
-	} else {
-		return cpInfo
-	}
-}
-
-func (cp *ConstantPool) getUtf8(index uint16) string {
-	if index == 0 {
-		return ""
-	}
-	return cp.getConstantInfo(index).(string)
+	return ConstantPool{consts}
 }

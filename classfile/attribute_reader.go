@@ -21,16 +21,13 @@ type BootstrapMethod struct {
 }
 
 func readBootstrapMethodsAttribute(reader *ClassReader) BootstrapMethodsAttribute {
-	numBootstrapMethods := reader.readUint16()
-	bootstrapMethods := make([]BootstrapMethod, numBootstrapMethods)
-	for i := range bootstrapMethods {
-		bootstrapMethods[i] = BootstrapMethod{
-			BootstrapMethodRef: reader.readUint16(),
-			BootstrapArguments: reader.readUint16s(),
-		}
-	}
 	return BootstrapMethodsAttribute{
-		BootstrapMethods: bootstrapMethods,
+		BootstrapMethods: reader.readTable(func(reader *ClassReader) BootstrapMethod {
+			return BootstrapMethod{
+				BootstrapMethodRef: reader.ReadUint16(),
+				BootstrapArguments: reader.readUint16s(),
+			}
+		}).([]BootstrapMethod),
 	}
 }
 
@@ -62,13 +59,11 @@ type CodeAttribute struct {
 
 func readCodeAttribute(reader *ClassReader) CodeAttribute {
 	return CodeAttribute{
-		MaxStack:       reader.readUint16(),
-		MaxLocals:      reader.readUint16(),
-		Code:           reader.readBytes(reader.readUint32()),
+		MaxStack:       reader.ReadUint16(),
+		MaxLocals:      reader.ReadUint16(),
+		Code:           reader.ReadBytes(int(reader.ReadUint32())),
 		ExceptionTable: readExceptionTable(reader),
-		AttributeTable: AttributeTable{
-			readAttributes(reader),
-		},
+		AttributeTable: readAttributes(reader),
 	}
 }
 
@@ -80,17 +75,14 @@ type ExceptionTableEntry struct {
 }
 
 func readExceptionTable(reader *ClassReader) []ExceptionTableEntry {
-	tableLength := reader.readUint16()
-	exceptionTable := make([]ExceptionTableEntry, tableLength)
-	for i := range exceptionTable {
-		exceptionTable[i] = ExceptionTableEntry{
-			StartPc:   reader.readUint16(),
-			EndPc:     reader.readUint16(),
-			HandlerPc: reader.readUint16(),
-			CatchType: reader.readUint16(),
+	return reader.readTable(func(reader *ClassReader) ExceptionTableEntry {
+		return ExceptionTableEntry{
+			StartPc:   reader.ReadUint16(),
+			EndPc:     reader.ReadUint16(),
+			HandlerPc: reader.ReadUint16(),
+			CatchType: reader.ReadUint16(),
 		}
-	}
-	return exceptionTable
+	}).([]ExceptionTableEntry)
 }
 
 /*
@@ -106,7 +98,7 @@ type ConstantValueAttribute struct {
 
 func readConstantValueAttribute(reader *ClassReader) ConstantValueAttribute {
 	return ConstantValueAttribute{
-		ConstantValueIndex: reader.readUint16(),
+		ConstantValueIndex: reader.ReadUint16(),
 	}
 }
 
@@ -125,8 +117,8 @@ type EnclosingMethodAttribute struct {
 
 func readEnclosingMethodAttribute(reader *ClassReader) EnclosingMethodAttribute {
 	return EnclosingMethodAttribute{
-		ClassIndex:  reader.readUint16(),
-		MethodIndex: reader.readUint16(),
+		ClassIndex:  reader.ReadUint16(),
+		MethodIndex: reader.ReadUint16(),
 	}
 }
 
@@ -172,18 +164,15 @@ type InnerClassInfo struct {
 }
 
 func readInnerClassesAttribute(reader *ClassReader) InnerClassesAttribute {
-	numberOfClasses := reader.readUint16()
-	classes := make([]InnerClassInfo, numberOfClasses)
-	for i := range classes {
-		classes[i] = InnerClassInfo{
-			InnerClassInfoIndex:   reader.readUint16(),
-			OuterClassInfoIndex:   reader.readUint16(),
-			InnerNameIndex:        reader.readUint16(),
-			InnerClassAccessFlags: reader.readUint16(),
-		}
-	}
 	return InnerClassesAttribute{
-		Classes: classes,
+		Classes: reader.readTable(func(reader *ClassReader) InnerClassInfo {
+			return InnerClassInfo{
+				InnerClassInfoIndex:   reader.ReadUint16(),
+				OuterClassInfoIndex:   reader.ReadUint16(),
+				InnerNameIndex:        reader.ReadUint16(),
+				InnerClassAccessFlags: reader.ReadUint16(),
+			}
+		}).([]InnerClassInfo),
 	}
 }
 
@@ -207,16 +196,13 @@ type LineNumberTableEntry struct {
 }
 
 func readLineNumberTableAttribute(reader *ClassReader) LineNumberTableAttribute {
-	tableLength := reader.readUint16()
-	lineNumberTable := make([]LineNumberTableEntry, tableLength)
-	for i := range lineNumberTable {
-		lineNumberTable[i] = LineNumberTableEntry{
-			StartPC:    reader.readUint16(),
-			LineNumber: reader.readUint16(),
-		}
-	}
 	return LineNumberTableAttribute{
-		LineNumberTable: lineNumberTable,
+		LineNumberTable: reader.readTable(func(reader *ClassReader) LineNumberTableEntry {
+			return LineNumberTableEntry{
+				StartPC:    reader.ReadUint16(),
+				LineNumber: reader.ReadUint16(),
+			}
+		}).([]LineNumberTableEntry),
 	}
 }
 
@@ -246,19 +232,16 @@ type LocalVariableTableEntry struct {
 }
 
 func readLocalVariableTableAttribute(reader *ClassReader) LocalVariableTableAttribute {
-	tableLength := reader.readUint16()
-	localVariableTable := make([]LocalVariableTableEntry, tableLength)
-	for i := range localVariableTable {
-		localVariableTable[i] = LocalVariableTableEntry{
-			StartPc:         reader.readUint16(),
-			Length:          reader.readUint16(),
-			NameIndex:       reader.readUint16(),
-			DescriptorIndex: reader.readUint16(),
-			Index:           reader.readUint16(),
-		}
-	}
 	return LocalVariableTableAttribute{
-		LocalVariableTable: localVariableTable,
+		LocalVariableTable: reader.readTable(func(reader *ClassReader) LocalVariableTableEntry {
+			return LocalVariableTableEntry{
+				StartPc:         reader.ReadUint16(),
+				Length:          reader.ReadUint16(),
+				NameIndex:       reader.ReadUint16(),
+				DescriptorIndex: reader.ReadUint16(),
+				Index:           reader.ReadUint16(),
+			}
+		}).([]LocalVariableTableEntry),
 	}
 }
 
@@ -288,19 +271,16 @@ type LocalVariableTypeTableEntry struct {
 }
 
 func readLocalVariableTypeTableAttribute(reader *ClassReader) LocalVariableTypeTableAttribute {
-	tableLength := reader.readUint16()
-	localVariableTypeTable := make([]LocalVariableTypeTableEntry, tableLength)
-	for i := range localVariableTypeTable {
-		localVariableTypeTable[i] = LocalVariableTypeTableEntry{
-			StartPc:        reader.readUint16(),
-			Length:         reader.readUint16(),
-			NameIndex:      reader.readUint16(),
-			SignatureIndex: reader.readUint16(),
-			Index:          reader.readUint16(),
-		}
-	}
 	return LocalVariableTypeTableAttribute{
-		LocalVariableTypeTable: localVariableTypeTable,
+		LocalVariableTypeTable: reader.readTable(func(reader *ClassReader) LocalVariableTypeTableEntry {
+			return LocalVariableTypeTableEntry{
+				StartPc:        reader.ReadUint16(),
+				Length:         reader.ReadUint16(),
+				NameIndex:      reader.ReadUint16(),
+				SignatureIndex: reader.ReadUint16(),
+				Index:          reader.ReadUint16(),
+			}
+		}).([]LocalVariableTypeTableEntry),
 	}
 }
 
@@ -317,7 +297,7 @@ type SignatureAttribute struct {
 
 func readSignatureAttribute(reader *ClassReader) SignatureAttribute {
 	return SignatureAttribute{
-		SignatureIndex: reader.readUint16(),
+		SignatureIndex: reader.ReadUint16(),
 	}
 }
 
@@ -333,7 +313,7 @@ type SourceFileAttribute struct {
 }
 
 func readSourceFileAttribute(reader *ClassReader) SourceFileAttribute {
-	return SourceFileAttribute{SourceFileIndex: reader.readUint16()}
+	return SourceFileAttribute{SourceFileIndex: reader.ReadUint16()}
 }
 
 /******** markers ********/

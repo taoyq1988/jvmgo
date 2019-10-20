@@ -1,14 +1,25 @@
 package heap
 
-import "github.com/taoyq1988/jvmgo/classpath"
+import (
+	"github.com/taoyq1988/jvmgo/classfile"
+	"github.com/taoyq1988/jvmgo/classpath"
+)
 
 type ClassMember struct {
-	//AccessFlags
+	AccessFlag
 	Name           string
 	Descriptor     string
 	Signature      string
 	AnnotationData []byte // RuntimeVisibleAnnotations_attribute
 	Class          *Class
+}
+
+func (member *ClassMember) parseMemberData(cf *classfile.Classfile, cfMember classfile.MemberInfo) {
+	member.AccessFlag = AccessFlag(cfMember.AccessFlags)
+	member.Name = cf.GetUTF8(cfMember.NameIndex)
+	member.Descriptor = cf.GetUTF8(cfMember.DescriptorIndex)
+	member.Signature = cf.GetUTF8(cfMember.GetSignatureIndex())
+	member.AnnotationData = cfMember.GetRuntimeVisibleAnnotationsAttributeData()
 }
 
 type Class struct {
@@ -28,4 +39,8 @@ type Class struct {
 	Interfaces         []*Class
 	LoadedFrom         classpath.Entry
 	initState          int
+}
+
+func (class *Class) String() string {
+	return `{Class name:` + class.Name + `}`
 }

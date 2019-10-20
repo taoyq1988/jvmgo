@@ -1,9 +1,8 @@
 package classfile
 
 import (
-	"fmt"
+	"github.com/taoyq1988/jvmgo/vmutils"
 	"math"
-	"unicode/utf16"
 )
 
 /*
@@ -13,7 +12,7 @@ CONSTANT_Integer_info {
 }
 */
 func readConstantIntegerInfo(reader *ClassReader) int32 {
-	return int32(reader.readUint32())
+	return int32(reader.ReadUint32())
 }
 
 /*
@@ -23,7 +22,7 @@ CONSTANT_Float_info {
 }
 */
 func readConstantFloatInfo(reader *ClassReader) float32 {
-	return math.Float32frombits(reader.readUint32())
+	return math.Float32frombits(reader.ReadUint32())
 }
 
 /*
@@ -34,7 +33,7 @@ CONSTANT_Long_info {
 }
 */
 func readConstantLongInfo(reader *ClassReader) int64 {
-	return int64(reader.readUint64())
+	return int64(reader.ReadUint64())
 }
 
 /*
@@ -45,7 +44,7 @@ CONSTANT_Double_info {
 }
 */
 func readConstantDoubleInfo(reader *ClassReader) float64 {
-	return math.Float64frombits(reader.readUint64())
+	return math.Float64frombits(reader.ReadUint64())
 }
 
 /*
@@ -56,79 +55,9 @@ CONSTANT_Utf8_info {
 }
 */
 func readConstantUtf8Info(reader *ClassReader) string {
-	length := uint32(reader.readUint16())
-	bytes := reader.readBytes(length)
-	return decodeMUTF8(bytes)
-}
-
-/*
-func decodeMUTF8(bytes []byte) string {
-	return string(bytes) // not correct!
-}
-*/
-
-// mutf8 -> utf16 -> utf32 -> string
-// see java.io.DataInputStream.readUTF(DataInput)
-func decodeMUTF8(bytearr []byte) string {
-	utflen := len(bytearr)
-	chararr := make([]uint16, utflen)
-
-	var c, char2, char3 uint16
-	count := 0
-	chararr_count := 0
-
-	for count < utflen {
-		c = uint16(bytearr[count])
-		if c > 127 {
-			break
-		}
-		count++
-		chararr[chararr_count] = c
-		chararr_count++
-	}
-
-	for count < utflen {
-		c = uint16(bytearr[count])
-		switch c >> 4 {
-		case 0, 1, 2, 3, 4, 5, 6, 7:
-			/* 0xxxxxxx*/
-			count++
-			chararr[chararr_count] = c
-			chararr_count++
-		case 12, 13:
-			/* 110x xxxx   10xx xxxx*/
-			count += 2
-			if count > utflen {
-				panic("malformed input: partial character at end")
-			}
-			char2 = uint16(bytearr[count-1])
-			if char2&0xC0 != 0x80 {
-				panic(fmt.Errorf("malformed input around byte %v", count))
-			}
-			chararr[chararr_count] = c&0x1F<<6 | char2&0x3F
-			chararr_count++
-		case 14:
-			/* 1110 xxxx  10xx xxxx  10xx xxxx*/
-			count += 3
-			if count > utflen {
-				panic("malformed input: partial character at end")
-			}
-			char2 = uint16(bytearr[count-2])
-			char3 = uint16(bytearr[count-1])
-			if char2&0xC0 != 0x80 || char3&0xC0 != 0x80 {
-				panic(fmt.Errorf("malformed input around byte %v", (count - 1)))
-			}
-			chararr[chararr_count] = c&0x0F<<12 | char2&0x3F<<6 | char3&0x3F<<0
-			chararr_count++
-		default:
-			/* 10xx xxxx,  1111 xxxx */
-			panic(fmt.Errorf("malformed input around byte %v", count))
-		}
-	}
-	// The number of chars produced may be less than utflen
-	chararr = chararr[0:chararr_count]
-	runes := utf16.Decode(chararr)
-	return string(runes)
+	length := int(reader.ReadUint16())
+	bytes := reader.ReadBytes(length)
+	return vmutils.DecodeMUTF8(bytes)
 }
 
 /*
@@ -143,7 +72,7 @@ type ConstantStringInfo struct {
 
 func readConstantStringInfo(reader *ClassReader) ConstantStringInfo {
 	return ConstantStringInfo{
-		StringIndex: reader.readUint16(),
+		StringIndex: reader.ReadUint16(),
 	}
 }
 
@@ -159,7 +88,7 @@ type ConstantClassInfo struct {
 
 func readConstantClassInfo(reader *ClassReader) ConstantClassInfo {
 	return ConstantClassInfo{
-		NameIndex: reader.readUint16(),
+		NameIndex: reader.ReadUint16(),
 	}
 }
 
@@ -189,8 +118,8 @@ type ConstantMemberRefInfo struct {
 func readConstantMemberRefInfo(reader *ClassReader, tag uint8) ConstantMemberRefInfo {
 	return ConstantMemberRefInfo{
 		Tag:              tag,
-		ClassIndex:       reader.readUint16(),
-		NameAndTypeIndex: reader.readUint16(),
+		ClassIndex:       reader.ReadUint16(),
+		NameAndTypeIndex: reader.ReadUint16(),
 	}
 }
 
@@ -208,8 +137,8 @@ type ConstantNameAndTypeInfo struct {
 
 func readConstantNameAndTypeInfo(reader *ClassReader) ConstantNameAndTypeInfo {
 	return ConstantNameAndTypeInfo{
-		NameIndex:       reader.readUint16(),
-		DescriptorIndex: reader.readUint16(),
+		NameIndex:       reader.ReadUint16(),
+		DescriptorIndex: reader.ReadUint16(),
 	}
 }
 
@@ -229,8 +158,8 @@ type ConstantInvokeDynamicInfo struct {
 
 func readConstantInvokeDynamicInfo(reader *ClassReader) ConstantInvokeDynamicInfo {
 	return ConstantInvokeDynamicInfo{
-		BootstrapMethodAttrIndex: reader.readUint16(),
-		NameAndTypeIndex:         reader.readUint16(),
+		BootstrapMethodAttrIndex: reader.ReadUint16(),
+		NameAndTypeIndex:         reader.ReadUint16(),
 	}
 }
 
@@ -248,8 +177,8 @@ type ConstantMethodHandleInfo struct {
 
 func readConstantMethodHandleInfo(reader *ClassReader) ConstantMethodHandleInfo {
 	return ConstantMethodHandleInfo{
-		ReferenceKind:  reader.readUint8(),
-		ReferenceIndex: reader.readUint16(),
+		ReferenceKind:  reader.ReadUint8(),
+		ReferenceIndex: reader.ReadUint16(),
 	}
 }
 
@@ -265,6 +194,6 @@ type ConstantMethodTypeInfo struct {
 
 func readConstantMethodTypeInfo(reader *ClassReader) ConstantMethodTypeInfo {
 	return ConstantMethodTypeInfo{
-		DescriptorIndex: reader.readUint16(),
+		DescriptorIndex: reader.ReadUint16(),
 	}
 }

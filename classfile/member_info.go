@@ -24,24 +24,20 @@ type MemberInfo struct {
 }
 
 func readMembers(reader *ClassReader) []MemberInfo {
-	memberCount := reader.readUint16()
-	members := make([]MemberInfo, memberCount)
-	for i := range members {
-		members[i] = MemberInfo{}
-		members[i].read(reader)
-	}
-	return members
+	return reader.readTable(readMember).([]MemberInfo)
 }
 
-func (mi *MemberInfo) read(reader *ClassReader) {
-	mi.AccessFlags = reader.readUint16()
-	mi.NameIndex = reader.readUint16()
-	mi.DescriptorIndex = reader.readUint16()
-	mi.attributes = readAttributes(reader)
+func readMember(reader *ClassReader) MemberInfo {
+	return MemberInfo{
+		AccessFlags:     reader.ReadUint16(),
+		NameIndex:       reader.ReadUint16(),
+		DescriptorIndex: reader.ReadUint16(),
+		AttributeTable:  readAttributes(reader),
+	}
 }
 
 func (mi *MemberInfo) CodeAttribute() *CodeAttribute {
-	for _, attr := range mi.attributes {
+	for _, attr := range mi.AttributeTable {
 		switch attr.(type) {
 		case CodeAttribute:
 			a := attr.(CodeAttribute)
