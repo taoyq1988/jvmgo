@@ -2,6 +2,14 @@ package heap
 
 import "github.com/taoyq1988/jvmgo/classfile"
 
+const (
+	mainMethodName   = "main"
+	mainMethodDesc   = "([Ljava/lang/String;)V"
+	clinitMethodName = "<clinit>"
+	clinitMethodDesc = "()V"
+	constructorName  = "<init>"
+)
+
 type MethodData struct {
 	MaxStack                uint
 	MaxLocals               uint
@@ -52,5 +60,70 @@ func (method *Method) parseDescriptor() {
 	method.ParamSlotCount = method.getParamSlotCount()
 	if !method.IsStatic() {
 		method.ParamSlotCount++
+	}
+}
+
+/**
+class vtable
+ */
+func createVTable(class *Class) {
+	class.vtable = copySuperVTable(class)
+	for _, m := range class.Methods {
+		if isVirtualMethod(m) {
+			if i := indexOf(class.vtable, m); i != -1 {
+				class.vtable[i] = m //override
+			} else {
+				addVMethod(class, m)
+			}
+		}
+	}
+	eachInterfaceMethod(class, func(method *Method) {
+		if i := indexOf(class.vtable, method); i == -1 {
+			addVMethod(class, method)
+		}
+	})
+}
+
+func copySuperVTable(class *Class) []*Method {
+	if class.SuperClass != nil {
+		superVTable := class.SuperClass.vtable
+		newVTable := make([]*Method, len(superVTable))
+		copy(newVTable, superVTable)
+		return newVTable
+	}
+	return nil
+}
+
+func isVirtualMethod(method *Method) bool {
+	return !method.IsStatic() &&
+		!method.IsPrivate() &&
+		method.Name != constructorName
+}
+
+func indexOf(vTable []*Method, method *Method) int {
+	for i, m := range vTable {
+		if m.Name == method.Name && m.Descriptor == method.Descriptor {
+			return i
+		}
+	}
+	return -1
+}
+
+func addVMethod(class *Class, method *Method) {
+	_len := len(class.vtable)
+	if _len == cap(class.vtable) {
+		newVTable := make([]*Method, _len, _len+8)
+		copy(newVTable, class.vtable)
+		class.vtable = newVTable
+	}
+	class.vtable = append(class.vtable, method)
+}
+
+func eachInterfaceMethod(class *Class, f func(*Method)) {
+	for _, iface := range class.Interfaces {
+		eachInterfaceMethod(iface, f)
+		for _, m := range iface.Methods {
+			f(m)
+		}
 	}
 }

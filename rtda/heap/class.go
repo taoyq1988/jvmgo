@@ -5,6 +5,14 @@ import (
 	"github.com/taoyq1988/jvmgo/classpath"
 )
 
+// initialization state
+const (
+	_notInitialized   = 0 // This Class object is verified and prepared but not initialized.
+	_beingInitialized = 1 // This Class object is being initialized by some particular thread T.
+	_fullyInitialized = 2 // This Class object is fully initialized and ready for use.
+	_initFailed       = 3 // This Class object is in an erroneous state, perhaps because initialization was attempted and failed.
+)
+
 type ClassMember struct {
 	AccessFlag
 	Name           string
@@ -57,6 +65,20 @@ type Class struct {
 
 func (class *Class) String() string {
 	return `{Class name:` + class.Name + `}`
+}
+
+func (class *Class) NewObj() *Object {
+	if class.instanceFieldCount > 0 {
+		fields := make([]Slot, class.instanceFieldCount)
+		obj := newObj(class, fields, nil)
+		obj.initFields()
+		return obj
+	}
+	return newObj(class, nil, nil)
+}
+
+func (class *Class) MarkFullyInitialized() {
+	class.initState = _fullyInitialized
 }
 
 /**
