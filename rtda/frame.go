@@ -47,6 +47,11 @@ func (frame *Frame) GetConstantPool() heap.ConstantPool {
 	return frame.Method.Class.ConstantPool
 }
 
+func (frame *Frame) RevertNextPC() {
+	frame.NextPC = frame.Thread.PC
+}
+
+//todo remove
 func newFrameTmp(thread *Thread, maxLocals, maxStack uint) *Frame {
 	return &Frame{
 		Thread:       thread,

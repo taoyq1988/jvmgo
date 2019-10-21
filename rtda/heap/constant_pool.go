@@ -46,6 +46,18 @@ func newConstantPool(cf *classfile.Classfile) ConstantPool {
 	return rtCp
 }
 
+func (cp ConstantPool) GetConstantString(index uint) *ConstantString {
+	return cp.GetConstant(index).(*ConstantString)
+}
+
+func (cp ConstantPool) GetConstantClass(index uint) *ConstantClass {
+	return cp.GetConstant(index).(*ConstantClass)
+}
+
+func (cp ConstantPool) GetConstantFieldRef(index uint) *ConstantFieldRef {
+	return cp.GetConstant(index).(*ConstantFieldRef)
+}
+
 func (cp ConstantPool) GetConstant(index uint) Constant {
 	// TODO: check index
 	return cp[index]
@@ -96,7 +108,7 @@ func (cr *ConstantClass) GetClass() *Class {
 // todo
 func (cr *ConstantClass) resolve() {
 	// load class
-	//cr.class = bootLoader.LoadClass(cr.name)
+	cr.class = bootLoader.LoadClass(cr.name)
 }
 
 

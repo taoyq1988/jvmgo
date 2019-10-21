@@ -46,7 +46,20 @@ func InitBootLoader(cp *classpath.ClassPath, verbose bool) {
 }
 
 func (loader *ClassLoader) _init() {
-
+	_jlObjectClass = loader.LoadClass(jlObjectClassName)
+	_jlClassClass = loader.LoadClass(jlClassClassName)
+	for _, class := range loader.classMap {
+		if class.JClass == nil {
+			class.JClass = _jlClassClass.NewObj()
+			class.JClass.Extra = class
+		}
+	}
+	_jlCloneableClass = loader.LoadClass(jlCloneableClassName)
+	_ioSerializableClass = loader.LoadClass(ioSerializableClassName)
+	_jlThreadClass = loader.LoadClass(jlThreadClassName)
+	_jlStringClass = loader.LoadClass(jlStringClassName)
+	loader.loadPrimitiveClasses()
+	loader.loadPrimitiveArrayClasses()
 }
 
 func (loader *ClassLoader) LoadClass(className string) *Class {
@@ -60,18 +73,25 @@ func (loader *ClassLoader) LoadClass(className string) *Class {
 	}
 }
 
-func (loader *ClassLoader) getArrayClass(componentClass *Class) *Class {
-	arrClassName := "[L" + componentClass.Name + ";"
-	return loader._getRefArrayClass(arrClassName)
-}
-
-func (loader *ClassLoader) _getRefArrayClass(className string) *Class {
-	if class, ok := loader.classMap[className]; ok {
-		return class
+func (loader *ClassLoader) loadPrimitiveClasses() {
+	for _, primitiveType := range PrimitiveTypes {
+		loader.loadPrimitiveClass(primitiveType.Name)
 	}
-	return loader.loadArrayClass(className)
+}
+func (loader *ClassLoader) loadPrimitiveClass(className string) {
+	class := &Class{Name: className}
+	//class.classLoader = loader
+	class.JClass = _jlClassClass.NewObj()
+	class.JClass.Extra = class
+	class.MarkFullyInitialized()
+	loader.classMap[className] = class
 }
 
+func (loader *ClassLoader) loadPrimitiveArrayClasses() {
+	for _, primitiveType := range PrimitiveTypes {
+		loader.loadArrayClass(primitiveType.ArrayClassName)
+	}
+}
 func (loader *ClassLoader) loadArrayClass(className string) *Class {
 	class := &Class{Name:className}
 	class.SuperClass = _jlObjectClass
@@ -82,6 +102,18 @@ func (loader *ClassLoader) loadArrayClass(className string) *Class {
 	class.MarkFullyInitialized()
 	loader.classMap[className] = class
 	return class
+}
+
+func (loader *ClassLoader) getArrayClass(componentClass *Class) *Class {
+	arrClassName := "[L" + componentClass.Name + ";"
+	return loader._getRefArrayClass(arrClassName)
+}
+
+func (loader *ClassLoader) _getRefArrayClass(className string) *Class {
+	if class, ok := loader.classMap[className]; ok {
+		return class
+	}
+	return loader.loadArrayClass(className)
 }
 
 func (loader *ClassLoader) reallyLoadClass(className string) *Class {

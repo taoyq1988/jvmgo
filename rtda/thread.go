@@ -1,5 +1,7 @@
 package rtda
 
+import "github.com/taoyq1988/jvmgo/rtda/heap"
+
 const (
 	defaultStackMaxSize = 1024
 )
@@ -36,10 +38,16 @@ func (thread *Thread) PopFrame() *Frame {
 	return top
 }
 
+func (thread *Thread) InitClass(class *heap.Class) {
+	//todo
+}
+
+
+//todo remove
 func (thread *Thread) PushFrame(frame *Frame) {
 	thread.stack.push(frame)
 }
-
+//todo remove
 func (self *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
 	return newFrameTmp(self, maxLocals, maxStack)
 }

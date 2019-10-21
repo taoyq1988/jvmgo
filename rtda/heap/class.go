@@ -61,6 +61,7 @@ type Class struct {
 	Interfaces         []*Class
 	LoadedFrom         classpath.Entry
 	initState          int
+	initThread uintptr
 }
 
 func (class *Class) String() string {
@@ -77,6 +78,22 @@ func (class *Class) NewObj() *Object {
 	return newObj(class, nil, nil)
 }
 
+func (class *Class) InitializationNotStarted() bool {
+	return class.initState < _beingInitialized // todo
+}
+func (class *Class) IsBeingInitialized() (bool, uintptr) {
+	return class.initState == _beingInitialized, class.initThread
+}
+func (class *Class) IsFullyInitialized() bool {
+	return class.initState == _fullyInitialized
+}
+func (class *Class) IsInitializationFailed() bool {
+	return class.initState == _initFailed
+}
+func (class *Class) MarkBeingInitialized(thread uintptr) {
+	class.initState = _beingInitialized
+	class.initThread = thread
+}
 func (class *Class) MarkFullyInitialized() {
 	class.initState = _fullyInitialized
 }
