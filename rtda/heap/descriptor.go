@@ -27,10 +27,9 @@ func (md ParsedDescriptor) getParamSlotCount() uint {
 	return slotCount
 }
 
-
 /**
 MethodDescriptorParser
- */
+*/
 type MethodDescriptorParser struct {
 	d string
 }

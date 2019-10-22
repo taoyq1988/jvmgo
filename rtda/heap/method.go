@@ -24,12 +24,12 @@ type Method struct {
 	ClassMember
 	MethodData
 	ParsedDescriptor
-	ParamCount     uint
-	ParamSlotCount uint
-	Slot           uint
+	ParamCount          uint
+	ParamSlotCount      uint
+	Slot                uint
 	exceptionTableIndex []uint16
-	nativeMethod   interface{} // cannot use package 'native' because of cycle import!
-	Instructions   interface{} // []instructions.Instruction
+	nativeMethod        interface{} // cannot use package 'native' because of cycle import!
+	Instructions        interface{} // []instructions.Instruction
 }
 
 func newMethod(class *Class, cf *classfile.Classfile, cfMember classfile.MemberInfo) *Method {
@@ -65,7 +65,7 @@ func (method *Method) parseDescriptor() {
 
 /**
 class vtable
- */
+*/
 func createVTable(class *Class) {
 	class.vtable = copySuperVTable(class)
 	for _, m := range class.Methods {

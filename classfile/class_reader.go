@@ -8,13 +8,13 @@ import (
 
 type ClassReader struct {
 	vmutils.BytesReader
-	cf   *Classfile
+	cf *Classfile
 }
 
 func newClassReader(data []byte) *ClassReader {
 	br := vmutils.NewBytesReader(data, binary.BigEndian)
 	return &ClassReader{
-		BytesReader:br,
+		BytesReader: br,
 	}
 }
 

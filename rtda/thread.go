@@ -32,22 +32,24 @@ func (thread *Thread) TopFrame() *Frame {
 
 func (thread *Thread) PopFrame() *Frame {
 	top := thread.stack.pop()
-	if top.OnPopAction != nil {
-		top.OnPopAction()
+	for _, action := range top.OnPopActions {
+		action(top)
 	}
 	return top
 }
 
 func (thread *Thread) InitClass(class *heap.Class) {
-	//todo
+	initClass(thread, class)
 }
 
-
-//todo remove
 func (thread *Thread) PushFrame(frame *Frame) {
 	thread.stack.push(frame)
 }
-//todo remove
-func (self *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
-	return newFrameTmp(self, maxLocals, maxStack)
+
+func (thread *Thread) NewFrame(method *heap.Method) *Frame {
+	if method.IsNative() {
+		return nil //todo
+	} else {
+		return newFrame(thread, method)
+	}
 }

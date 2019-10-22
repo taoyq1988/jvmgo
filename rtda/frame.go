@@ -4,16 +4,18 @@ import (
 	"github.com/taoyq1988/jvmgo/rtda/heap"
 )
 
+type OnPopAction func(popped *Frame)
+
 type Frame struct {
 	lower *Frame
 	LocalVars
 	OperandStack
-	Thread      *Thread
-	Method      *heap.Method
-	maxLocals   uint
-	maxStack    uint
-	NextPC      int
-	OnPopAction func()
+	Thread       *Thread
+	Method       *heap.Method
+	maxLocals    uint
+	maxStack     uint
+	NextPC       int
+	OnPopActions []OnPopAction
 }
 
 func newFrame(thread *Thread, method *heap.Method) *Frame {
@@ -51,13 +53,6 @@ func (frame *Frame) RevertNextPC() {
 	frame.NextPC = frame.Thread.PC
 }
 
-//todo remove
-func newFrameTmp(thread *Thread, maxLocals, maxStack uint) *Frame {
-	return &Frame{
-		Thread:       thread,
-		LocalVars:    newLocalVars(maxLocals),
-		OperandStack: newOperandStack(maxStack),
-		maxLocals:    maxLocals,
-		maxStack:     maxStack,
-	}
+func (frame *Frame) AppendOnPopAction(action OnPopAction) {
+	frame.OnPopActions = append(frame.OnPopActions, action)
 }

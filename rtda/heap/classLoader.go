@@ -17,7 +17,7 @@ const (
 )
 
 var (
-	bootLoader *ClassLoader
+	bootLoader           *ClassLoader
 	_jlObjectClass       *Class
 	_jlClassClass        *Class
 	_jlStringClass       *Class
@@ -28,8 +28,8 @@ var (
 
 type ClassLoader struct {
 	classpath *classpath.ClassPath
-	classMap map[string]*Class
-	verbose bool // debug
+	classMap  map[string]*Class
+	verbose   bool // debug
 }
 
 func BootLoader() *ClassLoader {
@@ -38,9 +38,9 @@ func BootLoader() *ClassLoader {
 
 func InitBootLoader(cp *classpath.ClassPath, verbose bool) {
 	bootLoader = &ClassLoader{
-		classpath:cp,
-		classMap: make(map[string]*Class),
-		verbose:verbose,
+		classpath: cp,
+		classMap:  make(map[string]*Class),
+		verbose:   verbose,
 	}
 	bootLoader._init()
 }
@@ -93,7 +93,7 @@ func (loader *ClassLoader) loadPrimitiveArrayClasses() {
 	}
 }
 func (loader *ClassLoader) loadArrayClass(className string) *Class {
-	class := &Class{Name:className}
+	class := &Class{Name: className}
 	class.SuperClass = _jlObjectClass
 	class.Interfaces = []*Class{_jlCloneableClass, _ioSerializableClass}
 	class.JClass = _jlClassClass.NewObj()

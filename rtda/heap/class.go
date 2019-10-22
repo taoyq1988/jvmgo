@@ -3,6 +3,7 @@ package heap
 import (
 	"github.com/taoyq1988/jvmgo/classfile"
 	"github.com/taoyq1988/jvmgo/classpath"
+	"sync"
 )
 
 // initialization state
@@ -61,7 +62,8 @@ type Class struct {
 	Interfaces         []*Class
 	LoadedFrom         classpath.Entry
 	initState          int
-	initThread uintptr
+	InitCond           *sync.Cond
+	initThread         uintptr
 }
 
 func (class *Class) String() string {
@@ -98,11 +100,25 @@ func (class *Class) MarkFullyInitialized() {
 	class.initState = _fullyInitialized
 }
 
+func (class *Class) getDeclaredMethod(name, descriptor string, isStatic bool) *Method {
+	for _, method := range class.Methods {
+		if method.IsStatic() == isStatic && method.Name == name && method.Descriptor == descriptor {
+			return method
+		}
+	}
+	return nil
+}
+
+func (class *Class) GetClinitMethod() *Method {
+	return class.getDeclaredMethod(clinitMethodName, clinitMethodDesc, true)
+}
+
 /**
 Create class
- */
+*/
 func newClass(cf *classfile.Classfile) *Class {
 	class := &Class{}
+	class.InitCond = sync.NewCond(&sync.Mutex{})
 	class.AccessFlag = AccessFlag(cf.AccessFlags)
 	class.parseConstantPool(cf)
 	class.parseClassNames(cf)

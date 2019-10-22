@@ -5,13 +5,13 @@ import (
 	"github.com/taoyq1988/jvmgo/classfile"
 )
 
-type Constant interface {}
+type Constant interface{}
 type ConstantPool []Constant
 
 func newConstantPool(cf *classfile.Classfile) ConstantPool {
 	cfCp := cf.ConstPool
 	rtCp := make([]Constant, len(cfCp))
-	for i:=1 ; i<len(cfCp); i++ {
+	for i := 1; i < len(cfCp); i++ {
 		cpInfo := cfCp[i]
 		switch x := cpInfo.(type) {
 		case string:
@@ -63,10 +63,9 @@ func (cp ConstantPool) GetConstant(index uint) Constant {
 	return cp[index]
 }
 
-
 /**
 ConstantString
- */
+*/
 type ConstantString struct {
 	goStr string
 	jStr  *Object
@@ -83,10 +82,9 @@ func (s *ConstantString) GetJString() *Object {
 	return s.jStr
 }
 
-
 /**
 ConstantClass
- */
+*/
 type ConstantClass struct {
 	name  string
 	class *Class
@@ -111,10 +109,9 @@ func (cr *ConstantClass) resolve() {
 	cr.class = bootLoader.LoadClass(cr.name)
 }
 
-
 /**
 ConstantMemberRef
- */
+*/
 type ConstantMemberRef struct {
 	className  string
 	name       string
@@ -126,10 +123,9 @@ func (mr *ConstantMemberRef) init(cf *classfile.Classfile, classIdx, nameAndType
 	mr.name, mr.descriptor = getNameAndType(cf, nameAndTypeIdx)
 }
 
-
 /**
 ConstantFieldRef
- */
+*/
 type ConstantFieldRef struct {
 	ConstantMemberRef
 	field *Field
@@ -206,10 +202,9 @@ func (fr *ConstantFieldRef) _findInterfaceField(class *Class) bool {
 	return false
 }
 
-
 /**
 ConstantMethodRef
- */
+*/
 type ConstantMethodRef struct {
 	ConstantMemberRef
 	ParamSlotCount uint
@@ -300,10 +295,9 @@ func (mr *ConstantMethodRef) GetVirtualMethod(ref *Object) *Method {
 	return nil
 }
 
-
 /**
 ConstantInterfaceMethodRef
- */
+*/
 type ConstantInterfaceMethodRef struct {
 	ConstantMethodRef
 }
@@ -345,10 +339,9 @@ func findInterfaceMethod(interfaces []*Class, name, descriptor string) *Method {
 	return nil
 }
 
-
 /**
 ConstantInvokeDynamic
- */
+*/
 type ConstantInvokeDynamic struct {
 	name               string
 	_type              string
@@ -376,7 +369,7 @@ func (indy *ConstantInvokeDynamic) MethodHandle() {
 
 /**
 ConstantMethodHandle
- */
+*/
 type ConstantMethodHandle struct {
 	referenceKind  uint8
 	referenceIndex uint16
@@ -389,10 +382,9 @@ func newConstantMethodHandle(mhInfo classfile.ConstantMethodHandleInfo) *Constan
 	}
 }
 
-
 /**
 ConstantMethodType
- */
+*/
 type ConstantMethodType struct {
 	// todo
 }

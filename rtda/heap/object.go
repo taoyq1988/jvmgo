@@ -1,9 +1,9 @@
 package heap
 
 type Object struct {
-	Class   *Class
-	Fields  interface{} // []Slot for Object, []int32 for int[] ...
-	Extra   interface{} // remember some important things from Golang
+	Class  *Class
+	Fields interface{} // []Slot for Object, []int32 for int[] ...
+	Extra  interface{} // remember some important things from Golang
 }
 
 func newObj(class *Class, fields, extra interface{}) *Object {

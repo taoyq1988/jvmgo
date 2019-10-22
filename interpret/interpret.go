@@ -9,15 +9,6 @@ import (
 )
 
 func Interpret(methodInfo *classfile.MemberInfo) {
-	codeAttr := methodInfo.CodeAttribute()
-	maxLocals := codeAttr.MaxLocals
-	maxStack := codeAttr.MaxStack
-	bytecode := codeAttr.Code
-	thread := rtda.NewThread()
-	frame := thread.NewFrame(uint(maxLocals), uint(maxStack))
-	thread.PushFrame(frame)
-	defer catchError(frame)
-	loop(thread, bytecode)
 }
 
 func catchError(frame *rtda.Frame) {
