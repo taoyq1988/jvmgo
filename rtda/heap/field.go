@@ -18,3 +18,21 @@ func newField(class *Class, cf *classfile.Classfile, cfMember classfile.MemberIn
 	field.ConstValueIndex = cfMember.GetConstantValueIndex()
 	return field
 }
+
+func (field *Field) GetValue(ref *Object) Slot {
+	fields := ref.Fields.([]Slot)
+	return fields[field.SlotID]
+}
+
+func (field *Field) PutValue(ref *Object, val Slot) {
+	fields := ref.Fields.([]Slot)
+	fields[field.SlotID] = val
+}
+
+func (field *Field) GetStaticValue() Slot {
+	return field.Class.StaticFieldSlots[field.SlotID]
+}
+
+func (field *Field) PutStaticValue(val Slot) {
+	field.Class.StaticFieldSlots[field.SlotID] = val
+}

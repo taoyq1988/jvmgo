@@ -10,6 +10,7 @@ import (
 	. "github.com/taoyq1988/jvmgo/instructions/loads"
 	. "github.com/taoyq1988/jvmgo/instructions/math"
 	. "github.com/taoyq1988/jvmgo/instructions/options"
+	. "github.com/taoyq1988/jvmgo/instructions/references"
 	. "github.com/taoyq1988/jvmgo/instructions/stack"
 	. "github.com/taoyq1988/jvmgo/instructions/stores"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
@@ -184,9 +185,12 @@ func NewInstruction(opcode byte) base.Instruction {
 		return &BIPush{}
 	case OpSIPush:
 		return &SIPush{}
-	//case OpLDC: //TODO
-	//case OpLDCw: //TODO
-	//case OpLDC2w: //TODO
+	case OpLDC:
+		return &LDC{}
+	case OpLDCw:
+		return &LDC_W{}
+	case OpLDC2w:
+		return &LDC2_W{}
 	case OpILoad:
 		return &Load{}
 	case OpLLoad:
@@ -485,8 +489,34 @@ func NewInstruction(opcode byte) base.Instruction {
 		return areturn
 	case OpReturn:
 		return _return
+	case OpGetStatic:
+		return &GetStatic{}
+	case OpPutStatic:
+		return &PutStatic{}
+	case OpGetField:
+		return &GetField{}
+	case OpPutField:
+		return &PutField{}
+	//case OpInvokeVirtual:
+	//case OpInvokeSpecial:
+	//case OpInvokeStatic:
+	//case OpInvokeInterface:
+	//case OpInvokeDynamic:
+	case OpNew:
+		return &New{}
+	//case OpNewArray:
+	//case OpANewArray:
+	//case OpArrayLength:
+	//case OpAThrow:
+	case OpCheckCast:
+		return &CheckCast{}
+	case OpInstanceOf:
+		return &InstanceOf{}
+	//case OpMonitorEnter:
+	//case OpMonitorExit:
 	case OpWide:
 		return &Wide{}
+	//case OpMultiANewArray:
 	case OpIfNull:
 		return &IfNull{}
 	case OpIfNonNull:
@@ -496,6 +526,8 @@ func NewInstruction(opcode byte) base.Instruction {
 	case OpJSRw:
 		return &JsrW{}
 	//case OpBreakpoint: //todo
+	//case OpInvokeNative:
+	//case OpBootstrap:
 
 	default:
 		panic("invalid opcode")

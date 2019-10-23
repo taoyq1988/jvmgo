@@ -70,6 +70,10 @@ func (class *Class) String() string {
 	return `{Class name:` + class.Name + `}`
 }
 
+func (class *Class) NameJlsFormat() string {
+	return SlashToDot(class.Name)
+}
+
 func (class *Class) NewObj() *Object {
 	if class.instanceFieldCount > 0 {
 		fields := make([]Slot, class.instanceFieldCount)
@@ -100,6 +104,17 @@ func (class *Class) MarkFullyInitialized() {
 	class.initState = _fullyInitialized
 }
 
+func (class *Class) getField(name, descriptor string, isStatic bool) *Field {
+	for k := class; k != nil; k = k.SuperClass {
+		for _, field := range k.Fields {
+			if field.IsStatic() == isStatic && field.Name == name && field.Descriptor == descriptor {
+				return field
+			}
+		}
+	}
+	return nil
+}
+
 func (class *Class) getDeclaredMethod(name, descriptor string, isStatic bool) *Method {
 	for _, method := range class.Methods {
 		if method.IsStatic() == isStatic && method.Name == name && method.Descriptor == descriptor {
@@ -111,6 +126,72 @@ func (class *Class) getDeclaredMethod(name, descriptor string, isStatic bool) *M
 
 func (class *Class) GetClinitMethod() *Method {
 	return class.getDeclaredMethod(clinitMethodName, clinitMethodDesc, true)
+}
+
+func (class *Class) IsArray() bool {
+	return class.Name[0] == '['
+}
+
+func (class *Class) isJlObject() bool {
+	return class == _jlObjectClass
+}
+func (class *Class) isJlCloneable() bool {
+	return class == _jlCloneableClass
+}
+func (class *Class) isJioSerializable() bool {
+	return class == _ioSerializableClass
+}
+
+func (class *Class) ComponentClass() *Class {
+	componentClassName := getComponentClassName(class.Name)
+	return bootLoader.LoadClass(componentClassName)
+}
+
+/**
+isinstanceof && cast
+*/
+func (class *Class) IsAssignableFrom(cls *Class) bool {
+	if class == cls && class.isSuperClassOf(cls) && class.isSuperInterfaceOf(cls) {
+		return true
+	}
+	return false
+}
+
+func (class *Class) IsImplements(iface *Class) bool {
+	for k := class; k != nil; k = k.SuperClass {
+		for _, i := range k.Interfaces {
+			if i == iface || i.isSubInterfaceOf(iface) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (class *Class) isSuperInterfaceOf(iface *Class) bool {
+	return iface.isSubInterfaceOf(class)
+}
+
+func (class *Class) isSubInterfaceOf(iface *Class) bool {
+	for _, superInterface := range class.Interfaces {
+		if superInterface == iface || superInterface.isSubInterfaceOf(iface) {
+			return true
+		}
+	}
+	return false
+}
+
+func (class *Class) isSuperClassOf(c *Class) bool {
+	return c.isSubClassOf(class)
+}
+
+func (class *Class) isSubClassOf(c *Class) bool {
+	for k := class.SuperClass; k != nil; k = k.SuperClass {
+		if k == c {
+			return true
+		}
+	}
+	return false
 }
 
 /**

@@ -75,3 +75,17 @@ func (stack *OperandStack) PushRef(ref *heap.Object) {
 func (stack *OperandStack) PopRef() *heap.Object {
 	return stack.Pop().Ref
 }
+
+func (stack *OperandStack) PushL(slot heap.Slot, isLongOrDouble bool) {
+	stack.Push(slot)
+	if isLongOrDouble {
+		stack.size++
+	}
+}
+
+func (stack *OperandStack) PopL(isLongOrDouble bool) heap.Slot {
+	if isLongOrDouble {
+		stack.size--
+	}
+	return stack.Pop()
+}

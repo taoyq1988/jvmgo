@@ -155,33 +155,34 @@ func (fr *ConstantFieldRef) GetField(static bool) *Field {
 }
 
 func (fr *ConstantFieldRef) resolveInstanceField() {
-	//fromClass := bootLoader.LoadClass(fr.className)
-	//
-	//for class := fromClass; class != nil; class = class.SuperClass {
-	//	field := class.getField(fr.name, fr.descriptor, false)
-	//	if field != nil {
-	//		fr.field = field
-	//		return
-	//	}
-	//}
+	fromClass := bootLoader.LoadClass(fr.className)
+
+	//todo can simple
+	for class := fromClass; class != nil; class = class.SuperClass {
+		field := class.getField(fr.name, fr.descriptor, false)
+		if field != nil {
+			fr.field = field
+			return
+		}
+	}
 
 	// todo
 	panic(fmt.Errorf("instance field not found! %v", fr))
 }
 
 func (fr *ConstantFieldRef) resolveStaticField() {
-	//fromClass := bootLoader.LoadClass(fr.className)
-	//
-	//for class := fromClass; class != nil; class = class.SuperClass {
-	//	field := class.getField(fr.name, fr.descriptor, true)
-	//	if field != nil {
-	//		fr.field = field
-	//		return
-	//	}
-	//	if fr._findInterfaceField(class) {
-	//		return
-	//	}
-	//}
+	fromClass := bootLoader.LoadClass(fr.className)
+
+	for class := fromClass; class != nil; class = class.SuperClass {
+		field := class.getField(fr.name, fr.descriptor, true)
+		if field != nil {
+			fr.field = field
+			return
+		}
+		if fr._findInterfaceField(class) {
+			return
+		}
+	}
 
 	// todo
 	panic(fmt.Errorf("static field not found! %v", fr))

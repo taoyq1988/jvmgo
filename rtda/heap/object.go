@@ -20,3 +20,42 @@ func (object *Object) initFields() {
 		}
 	}
 }
+
+func (obj *Object) IsInstanceOf(class *Class) bool {
+	s, t := obj.Class, class
+	return checkcast(s, t)
+}
+
+func checkcast(s, t *Class) bool {
+	if s == t {
+		return true
+	}
+
+	if s.IsArray() {
+		if t.IsArray() {
+			sc := s.ComponentClass()
+			tc := t.ComponentClass()
+			return sc == tc || checkcast(sc, tc)
+		} else {
+			if t.IsInterface() {
+				return t.isJlCloneable() || t.isJioSerializable()
+			} else {
+				return t.isJlObject()
+			}
+		}
+	} else {
+		if s.IsInterface() {
+			if t.IsInterface() {
+				return t.isSuperInterfaceOf(s)
+			} else {
+				return t.isJlObject()
+			}
+		} else {
+			if t.IsInterface() {
+				return s.IsImplements(t)
+			} else {
+				return s.isSubClassOf(t)
+			}
+		}
+	}
+}

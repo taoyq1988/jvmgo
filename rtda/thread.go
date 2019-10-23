@@ -1,6 +1,8 @@
 package rtda
 
-import "github.com/taoyq1988/jvmgo/rtda/heap"
+import (
+	"github.com/taoyq1988/jvmgo/rtda/heap"
+)
 
 const (
 	defaultStackMaxSize = 1024
@@ -52,4 +54,16 @@ func (thread *Thread) NewFrame(method *heap.Method) *Frame {
 	} else {
 		return newFrame(thread, method)
 	}
+}
+
+/**
+Throw
+*/
+func (thread *Thread) ThrowNEP() {
+	//todo
+}
+
+func (thread *Thread) ThrowClassCastException(from, to *heap.Class) {
+	//msg := fmt.Sprintf("%v cannot be cast to %v", from.NameJlsFormat(), to.NameJlsFormat())
+	//thread.throwExceptionS("java/lang/ClassCastException", msg)
 }
