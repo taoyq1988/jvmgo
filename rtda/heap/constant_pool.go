@@ -213,6 +213,17 @@ type ConstantMethodRef struct {
 	vslot          int
 }
 
+//todo tmp
+func (mr *ConstantMethodRef) Name() string {
+	return mr.name
+}
+func (mr *ConstantMethodRef) Descriptor() string {
+	return mr.descriptor
+}
+func (mr *ConstantMethodRef) ClassName() string {
+	return mr.className
+}
+
 func newConstantMethodRef(cf *classfile.Classfile, cfRef classfile.ConstantMethodRefInfo) *ConstantMethodRef {
 
 	ref := &ConstantMethodRef{vslot: -1}

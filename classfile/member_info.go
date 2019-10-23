@@ -35,14 +35,3 @@ func readMember(reader *ClassReader) MemberInfo {
 		AttributeTable:  readAttributes(reader),
 	}
 }
-
-func (mi *MemberInfo) CodeAttribute() *CodeAttribute {
-	for _, attr := range mi.AttributeTable {
-		switch attr.(type) {
-		case CodeAttribute:
-			a := attr.(CodeAttribute)
-			return &a
-		}
-	}
-	return nil
-}

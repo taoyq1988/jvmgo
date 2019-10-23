@@ -67,9 +67,7 @@ func readConstantInfo(reader *ClassReader) ConstantInfo {
 	}
 }
 
-type ConstantPool []ConstantInfo
-
-func parseConstantPool(reader *ClassReader) ConstantPool {
+func parseConstantPool(reader *ClassReader) []ConstantInfo {
 	cpCount := int(reader.ReadUint16())
 	consts := make([]ConstantInfo, cpCount)
 
@@ -87,5 +85,5 @@ func parseConstantPool(reader *ClassReader) ConstantPool {
 		}
 	}
 
-	return ConstantPool{consts}
+	return consts
 }

@@ -55,6 +55,7 @@ func (reader *CodeReader) SkipPadding() {
 	}
 }
 
+//todo tmp
 func (reader *CodeReader) Reset(pc int) {
 	reader.pc = pc
 }

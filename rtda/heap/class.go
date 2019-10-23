@@ -115,6 +115,23 @@ func (class *Class) getField(name, descriptor string, isStatic bool) *Field {
 	return nil
 }
 
+/**
+GetMethod
+ */
+func (class *Class) getMethod(name, descriptor string, isStatic bool) *Method {
+	for k := class; k != nil; k = k.SuperClass {
+		for _, method := range k.Methods {
+			if method.IsStatic() == isStatic &&
+				method.Name == name &&
+				method.Descriptor == descriptor {
+				return method
+			}
+		}
+	}
+	// todo
+	return nil
+}
+
 func (class *Class) getDeclaredMethod(name, descriptor string, isStatic bool) *Method {
 	for _, method := range class.Methods {
 		if method.IsStatic() == isStatic && method.Name == name && method.Descriptor == descriptor {
@@ -124,10 +141,18 @@ func (class *Class) getDeclaredMethod(name, descriptor string, isStatic bool) *M
 	return nil
 }
 
+func (class *Class) GetStaticMethod(name, descriptor string) *Method {
+	return class.getMethod(name, descriptor, true)
+}
+
 func (class *Class) GetClinitMethod() *Method {
 	return class.getDeclaredMethod(clinitMethodName, clinitMethodDesc, true)
 }
 
+
+/**
+judge function
+ */
 func (class *Class) IsArray() bool {
 	return class.Name[0] == '['
 }
@@ -146,6 +171,7 @@ func (class *Class) ComponentClass() *Class {
 	componentClassName := getComponentClassName(class.Name)
 	return bootLoader.LoadClass(componentClassName)
 }
+
 
 /**
 isinstanceof && cast
@@ -250,20 +276,5 @@ func getEnclosingMethod(cf *classfile.Classfile) *EnclosingMethod {
 			MethodDescriptor: methodDescriptor,
 		}
 	}
-	return nil
-}
-
-func (class *Class) getMethod(name, descriptor string, isStatic bool) *Method {
-	for k := class; k != nil; k = k.SuperClass {
-		for _, method := range k.Methods {
-			if method.IsStatic() == isStatic &&
-				method.Name == name &&
-				method.Descriptor == descriptor {
-
-				return method
-			}
-		}
-	}
-	// todo
 	return nil
 }

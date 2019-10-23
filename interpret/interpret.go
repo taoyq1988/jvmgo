@@ -2,13 +2,18 @@ package interpret
 
 import (
 	"fmt"
-	"github.com/taoyq1988/jvmgo/classfile"
 	"github.com/taoyq1988/jvmgo/instructions"
 	"github.com/taoyq1988/jvmgo/instructions/base"
 	"github.com/taoyq1988/jvmgo/rtda"
+	"github.com/taoyq1988/jvmgo/rtda/heap"
 )
 
-func Interpret(methodInfo *classfile.MemberInfo) {
+func Interpret(method *heap.Method) {
+	thread := rtda.NewThread()
+	frame := thread.NewFrame(method)
+	thread.PushFrame(frame)
+	defer catchError(frame)
+	loop(thread, method.Code)
 }
 
 func catchError(frame *rtda.Frame) {
