@@ -22,7 +22,15 @@ public class Test {
         System.out.println(test.b);
         System.out.println(test instanceof Object);
 
-        MethodType mt = MethodType.methodType(Test.class);
-        MethodHandles.lookup().findConstructor(Test.class, mt);
+//        MethodType mt = MethodType.methodType(Test.class);
+//        MethodHandles.lookup().findConstructor(Test.class, mt);
+        System.out.println(fab(30));
+    }
+
+    public static int fab(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        return fab(n - 1) + fab(n - 2);
     }
 }

@@ -1,6 +1,7 @@
 package rtda
 
 import (
+	"fmt"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
 )
 
@@ -26,6 +27,10 @@ func NewThread() *Thread {
 	return &Thread{
 		stack: newStack(defaultStackMaxSize),
 	}
+}
+
+func (thread *Thread) IsStackEmpty() bool {
+	return thread.stack.isEmpty()
 }
 
 /**
@@ -70,6 +75,15 @@ func (thread *Thread) InitClass(class *heap.Class) {
 Invoke
 */
 func (thread *Thread) InvokeMethod(method *heap.Method) {
+	if method.IsNative() {
+		if method.Name == "registerNatives" {
+			thread.PopFrame()
+		} else {
+			fmt.Printf("invoke native method %s, class %s\n", method.Name, method.Class.Name)
+			thread.PopFrame()
+		}
+		return
+	}
 	currentFrame := thread.CurrentFrame()
 	newFrame := thread.NewFrame(method)
 	thread.PushFrame(newFrame)

@@ -8,33 +8,49 @@ import (
 	"github.com/taoyq1988/jvmgo/rtda/heap"
 )
 
+const isLog = false
+
 func Interpret(method *heap.Method) {
 	thread := rtda.NewThread()
 	frame := thread.NewFrame(method)
 	thread.PushFrame(frame)
 	defer catchError(frame)
-	loop(thread, method.Code)
+	loop(thread)
 }
 
 func catchError(frame *rtda.Frame) {
 	if r := recover(); r != nil {
-		fmt.Println("localvars", frame.LocalVars)
-		fmt.Println("operandstack", frame.OperandStack)
+		fmt.Printf("[DEBUG] frame method %s, method descriptor %s, method class %s\n", frame.Method.Name, frame.Method.Descriptor, frame.Method.Class.Name)
+		fmt.Println("[DEBUG] localvars", frame.LocalVars)
+		fmt.Println("[DEBUG] operandstack", frame.OperandStack)
 		panic("error")
 	}
 }
 
-func loop(thread *rtda.Thread, bytecode []byte) {
-	frame := thread.PopFrame()
-	reader := base.NewCodeReader(bytecode)
+func logInstruction(frame *rtda.Frame, inst base.Instruction) {
+	fmt.Printf("[execute] method %s, class %s, inst %T %v, pc %d\n", frame.Method.Name, frame.Method.Class.Name, inst, inst, frame.Thread.PC)
+	fmt.Println("[execute] localvars", frame.LocalVars)
+	fmt.Println("[execute] operandstack", frame.OperandStack)
+	fmt.Println()
+}
+
+func loop(thread *rtda.Thread) {
+	reader := &base.CodeReader{}
 	for {
-		thread.PC = frame.NextPC
-		reader.Reset(thread.PC)
+		frame := thread.CurrentFrame()
+		pc := frame.NextPC
+		thread.PC = pc
+		reader.Reset(frame.Method.Code, thread.PC)
 		opcode := reader.ReadUint8()
 		inst := instructions.NewInstruction(opcode)
 		inst.FetchOperands(reader)
 		frame.NextPC = reader.PC()
-		fmt.Printf("execute %T %v, pc %d\n", inst, inst, thread.PC)
+		if isLog {
+			logInstruction(frame, inst)
+		}
 		inst.Execute(frame)
+		if thread.IsStackEmpty() {
+			break
+		}
 	}
 }
