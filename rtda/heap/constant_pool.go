@@ -225,7 +225,6 @@ func (mr *ConstantMethodRef) ClassName() string {
 }
 
 func newConstantMethodRef(cf *classfile.Classfile, cfRef classfile.ConstantMethodRefInfo) *ConstantMethodRef {
-
 	ref := &ConstantMethodRef{vslot: -1}
 	ref.init(cf, cfRef.ClassIndex, cfRef.NameAndTypeIndex)
 	ref.ParamSlotCount = calcParamSlotCount(ref.descriptor)
@@ -275,9 +274,8 @@ func (mr *ConstantMethodRef) resolveSpecialMethod() {
 }
 
 func (mr *ConstantMethodRef) findMethod(isStatic bool) *Method {
-	//class := bootLoader.LoadClass(mr.className)
-	//return class.getMethod(mr.name, mr.descriptor, isStatic)
-	return nil
+	class := bootLoader.LoadClass(mr.className)
+	return class.getMethod(mr.name, mr.descriptor, isStatic)
 }
 
 // todo
@@ -300,11 +298,10 @@ func (mr *ConstantMethodRef) findMethod(isStatic bool) *Method {
 }*/
 
 func (mr *ConstantMethodRef) GetVirtualMethod(ref *Object) *Method {
-	//if mr.vslot < 0 {
-	//	mr.vslot = getVslot(ref.Class, mr.name, mr.descriptor)
-	//}
-	//return ref.Class.vtable[mr.vslot]
-	return nil
+	if mr.vslot < 0 {
+		mr.vslot = getVSlot(ref.Class, mr.name, mr.descriptor)
+	}
+	return ref.Class.vtable[mr.vslot]
 }
 
 /**

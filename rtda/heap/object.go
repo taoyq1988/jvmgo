@@ -1,13 +1,18 @@
 package heap
 
+import "sync"
+
 type Object struct {
 	Class  *Class
 	Fields interface{} // []Slot for Object, []int32 for int[] ...
 	Extra  interface{} // remember some important things from Golang
+	//Fixme: can simple
+	Monitor *Monitor
+	lock    *sync.RWMutex // state lock
 }
 
 func newObj(class *Class, fields, extra interface{}) *Object {
-	return &Object{class, fields, extra}
+	return &Object{class, fields, extra, newMonitor(), &sync.RWMutex{}}
 }
 
 func (object *Object) initFields() {

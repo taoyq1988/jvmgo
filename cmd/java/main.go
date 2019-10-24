@@ -43,4 +43,3 @@ func startJVM(opts options.Options, mainClassName string, args []string) {
 	mainMethod := mainClass.GetStaticMethod("main", "([Ljava/lang/String;)V")
 	interpret.Interpret(mainMethod)
 }
-

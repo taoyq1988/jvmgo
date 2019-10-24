@@ -28,6 +28,9 @@ func NewThread() *Thread {
 	}
 }
 
+/**
+Operation of frame
+*/
 func (thread *Thread) TopFrame() *Frame {
 	return thread.stack.top()
 }
@@ -40,10 +43,6 @@ func (thread *Thread) PopFrame() *Frame {
 	return top
 }
 
-func (thread *Thread) InitClass(class *heap.Class) {
-	initClass(thread, class)
-}
-
 func (thread *Thread) PushFrame(frame *Frame) {
 	thread.stack.push(frame)
 }
@@ -53,6 +52,53 @@ func (thread *Thread) NewFrame(method *heap.Method) *Frame {
 		return nil //todo
 	} else {
 		return newFrame(thread, method)
+	}
+}
+
+func (thread *Thread) CurrentFrame() *Frame {
+	return thread.stack.top()
+}
+
+/**
+InitClass
+*/
+func (thread *Thread) InitClass(class *heap.Class) {
+	initClass(thread, class)
+}
+
+/**
+Invoke
+*/
+func (thread *Thread) InvokeMethod(method *heap.Method) {
+	currentFrame := thread.CurrentFrame()
+	newFrame := thread.NewFrame(method)
+	thread.PushFrame(newFrame)
+	if n := method.ParamSlotCount; n > 0 {
+		parseArgs(currentFrame, newFrame, n)
+	}
+
+	if method.IsSynchronized() {
+		var monitor *heap.Monitor
+		if method.IsStatic() {
+			classObj := method.Class.JClass
+			monitor = classObj.Monitor
+		} else {
+			thisObj := newFrame.GetThis()
+			monitor = thisObj.Monitor
+		}
+		
+		monitor.Enter(thread)
+		newFrame.AppendOnPopAction(func(*Frame) {
+			monitor.Exit(thread)
+		})
+	}
+}
+
+func parseArgs(from *Frame, to *Frame, argSlotsCount uint) {
+	args := from.PopTops(argSlotsCount)
+	for i := uint(0); i < argSlotsCount; i++ {
+		to.SetLocalVar(i, args[i])
+		args[i] = heap.EmptySlot
 	}
 }
 

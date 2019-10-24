@@ -3,12 +3,12 @@ package rtda
 import "github.com/taoyq1988/jvmgo/rtda/heap"
 
 type OperandStack struct {
-	size  int
-	slots []Slot
+	size  uint
+	slots []heap.Slot
 }
 
 func newOperandStack(size uint) OperandStack {
-	slots := make([]Slot, size)
+	slots := make([]heap.Slot, size)
 	return OperandStack{
 		size:  0,
 		slots: slots,
@@ -16,18 +16,18 @@ func newOperandStack(size uint) OperandStack {
 }
 
 func (stack *OperandStack) PushNull() {
-	stack.Push(EmptySlot)
+	stack.Push(heap.EmptySlot)
 }
 
-func (stack *OperandStack) Push(slot Slot) {
+func (stack *OperandStack) Push(slot heap.Slot) {
 	stack.slots[stack.size] = slot
 	stack.size++
 }
 
-func (stack *OperandStack) Pop() Slot {
+func (stack *OperandStack) Pop() heap.Slot {
 	stack.size--
 	top := stack.slots[stack.size]
-	stack.slots[stack.size] = EmptySlot // help GC
+	stack.slots[stack.size] = heap.EmptySlot // help GC
 	return top
 }
 
@@ -88,4 +88,15 @@ func (stack *OperandStack) PopL(isLongOrDouble bool) heap.Slot {
 		stack.size--
 	}
 	return stack.Pop()
+}
+
+func (stack *OperandStack) PopTops(n uint) []heap.Slot {
+	start := stack.size - n
+	end := stack.size
+	stack.size -= n
+	return stack.slots[start:end]
+}
+
+func (stack *OperandStack) TopRef(n uint) *heap.Object {
+	return stack.slots[stack.size - n -1].Ref
 }

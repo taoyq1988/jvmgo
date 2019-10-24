@@ -501,8 +501,10 @@ func NewInstruction(opcode byte) base.Instruction {
 		return &InvokeVirtual{}
 	case OpInvokeSpecial:
 		return &InvokeSpecial{}
-	//case OpInvokeStatic:
-	//case OpInvokeInterface:
+	case OpInvokeStatic:
+		return &InvokeStatic{}
+	case OpInvokeInterface:
+		return &InvokeInterface{}
 	//case OpInvokeDynamic:
 	case OpNew:
 		return &New{}

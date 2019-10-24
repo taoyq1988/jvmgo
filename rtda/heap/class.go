@@ -117,7 +117,7 @@ func (class *Class) getField(name, descriptor string, isStatic bool) *Field {
 
 /**
 GetMethod
- */
+*/
 func (class *Class) getMethod(name, descriptor string, isStatic bool) *Method {
 	for k := class; k != nil; k = k.SuperClass {
 		for _, method := range k.Methods {
@@ -149,10 +149,9 @@ func (class *Class) GetClinitMethod() *Method {
 	return class.getDeclaredMethod(clinitMethodName, clinitMethodDesc, true)
 }
 
-
 /**
 judge function
- */
+*/
 func (class *Class) IsArray() bool {
 	return class.Name[0] == '['
 }
@@ -171,7 +170,6 @@ func (class *Class) ComponentClass() *Class {
 	componentClassName := getComponentClassName(class.Name)
 	return bootLoader.LoadClass(componentClassName)
 }
-
 
 /**
 isinstanceof && cast

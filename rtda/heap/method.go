@@ -66,6 +66,15 @@ func (method *Method) parseDescriptor() {
 /**
 class vtable
 */
+func getVSlot(class *Class, name, descriptor string) int {
+	for i, m := range class.vtable {
+		if m.Name == name && m.Descriptor == descriptor {
+			return i
+		}
+	}
+	return -1
+}
+
 func createVTable(class *Class) {
 	class.vtable = copySuperVTable(class)
 	for _, m := range class.Methods {

@@ -1,8 +1,15 @@
+import java.lang.invoke.*;
+
 public class Test {
     private int a;
     public static long b;
+    public static Test ttt;
 
-    public static void main(String[] args) {
+    static {
+        ttt = null;
+    }
+
+    public static void main(String[] args) throws Exception {
         Test test = new Test();
         int sum = 0;
         for (int i = 1 ; i <= 100; i ++) {
@@ -14,5 +21,8 @@ public class Test {
         System.out.println(test.a);
         System.out.println(test.b);
         System.out.println(test instanceof Object);
+
+        MethodType mt = MethodType.methodType(Test.class);
+        MethodHandles.lookup().findConstructor(Test.class, mt);
     }
 }
