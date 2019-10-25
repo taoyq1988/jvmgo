@@ -30,11 +30,10 @@ func JSFromGoStr(goStr string) *Object {
 
 // java char[] -> java.lang.String
 func JSFromChars(chars []uint16) *Object {
-	//charArr := NewCharArray(chars)
-	//jStr := bootLoader.JLStringClass().NewObj()
-	//jStr.SetFieldValue("value", "[C", NewRefSlot(charArr))
-	//return jStr
-	return nil
+	charArr := NewCharArray(chars)
+	jStr := bootLoader.JLStringClass().NewObj()
+	jStr.SetFieldValue("value", "[C", NewRefSlot(charArr))
+	return jStr
 }
 
 // java.lang.String -> go string
@@ -44,7 +43,6 @@ func JSToGoStr(jStr *Object) string {
 
 // java.lang.String -> java char[]
 func JSToChars(jStr *Object) []uint16 {
-	//charArr := jStr.GetFieldValue("value", "[C").Ref
-	//return charArr.Chars()
-	return nil
+	charArr := jStr.GetFieldValue("value", "[C").Ref
+	return charArr.Chars()
 }

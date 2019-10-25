@@ -75,6 +75,14 @@ func newPrimitiveArray(arrClass *Class, count uint) *Object {
 	}
 }
 
+func NewByteArray(bytes []int8) *Object {
+	return newObj(bootLoader.getClass("[B"), bytes, nil)
+}
+
+func NewCharArray(chars []uint16) *Object {
+	return newObj(bootLoader.getClass("[C"), chars, nil)
+}
+
 func NewRefArray(componentClass *Class, count uint) *Object {
 	arrClass := componentClass.arrayClass()
 	components := make([]*Object, count)
@@ -136,4 +144,17 @@ func checkcast(s, t *Class) bool {
 			}
 		}
 	}
+}
+
+/**
+reflection
+ */
+func (obj *Object) GetFieldValue(fieldName, descriptor string) Slot {
+	field := obj.Class.GetInstanceField(fieldName, descriptor)
+	return field.GetValue(obj)
+}
+
+func (obj *Object) SetFieldValue(fieldName, descriptor string, value Slot) {
+	field := obj.Class.GetInstanceField(fieldName, descriptor)
+	field.PutValue(obj, value)
 }

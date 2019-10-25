@@ -45,6 +45,23 @@ func InitBootLoader(cp *classpath.ClassPath, verbose bool) {
 	bootLoader._init()
 }
 
+func (loader *ClassLoader) ClassPath() *classpath.ClassPath {
+	return loader.classpath
+}
+
+func (loader *ClassLoader) JLObjectClass() *Class {
+	return _jlObjectClass
+}
+func (loader *ClassLoader) JLClassClass() *Class {
+	return _jlClassClass
+}
+func (loader *ClassLoader) JLStringClass() *Class {
+	return _jlStringClass
+}
+func (loader *ClassLoader) JLThreadClass() *Class {
+	return _jlThreadClass
+}
+
 func (loader *ClassLoader) getClass(name string) *Class {
 	if class, ok := loader.classMap[name]; ok {
 		return class

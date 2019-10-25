@@ -43,6 +43,10 @@ func (invoke *InvokeVirtual) Execute(frame *rtda.Frame) {
 		case "(I)V":fmt.Println("**", frame.PopInt())
 		case "(J)V":fmt.Println("**", frame.PopLong())
 		case "(Z)V":fmt.Println("**", frame.PopInt() != 0)
+		case "(Ljava/lang/String;)V":
+			jStr := frame.PopRef()
+			goStr := heap.JSToGoStr(jStr)
+			fmt.Println("**", goStr)
 		default:
 			panic("** panic")
 		}

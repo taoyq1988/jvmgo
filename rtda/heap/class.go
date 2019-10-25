@@ -106,7 +106,7 @@ func (class *Class) MarkFullyInitialized() {
 
 
 /**
-GetMethod
+GetField
 */
 func (class *Class) getField(name, descriptor string, isStatic bool) *Field {
 	for k := class; k != nil; k = k.SuperClass {
@@ -119,6 +119,17 @@ func (class *Class) getField(name, descriptor string, isStatic bool) *Field {
 	return nil
 }
 
+func (class *Class) GetStaticField(name, descriptor string) *Field {
+	return class.getField(name, descriptor, true)
+}
+
+func (class *Class) GetInstanceField(name, descriptor string) *Field {
+	return class.getField(name, descriptor, false)
+}
+
+/**
+GetMethod
+*/
 func (class *Class) getMethod(name, descriptor string, isStatic bool) *Method {
 	for k := class; k != nil; k = k.SuperClass {
 		for _, method := range k.Methods {
