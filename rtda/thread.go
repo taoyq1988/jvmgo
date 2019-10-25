@@ -135,3 +135,7 @@ func (thread *Thread) ThrowNegativeArraySizeException() {
 func (thread *Thread) ThrowArrayIndexOutOfBoundsException(index int32) {
 
 }
+
+func (thread *Thread) ThrowDivByZero() {
+
+}

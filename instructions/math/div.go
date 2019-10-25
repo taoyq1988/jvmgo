@@ -13,9 +13,10 @@ func (_ *IDiv) Execute(frame *rtda.Frame) {
 	val1 := frame.PopInt()
 	val2 := frame.PopInt()
 	if val1 == 0 {
-		//todo
+		frame.Thread.ThrowDivByZero()
+	} else {
+		frame.PushInt(val2 / val1)
 	}
-	frame.PushInt(val2 / val1)
 }
 
 type LDiv struct {
@@ -26,9 +27,10 @@ func (_ *LDiv) Execute(frame *rtda.Frame) {
 	val1 := frame.PopLong()
 	val2 := frame.PopLong()
 	if val1 == 0 {
-		//todo
+		frame.Thread.ThrowDivByZero()
+	} else {
+		frame.PushLong(val2 / val1)
 	}
-	frame.PushLong(val2 / val1)
 }
 
 type FDiv struct {
@@ -38,9 +40,6 @@ type FDiv struct {
 func (_ *FDiv) Execute(frame *rtda.Frame) {
 	val1 := frame.PopFloat()
 	val2 := frame.PopFloat()
-	if val1 == 0 {
-		//todo
-	}
 	frame.PushFloat(val2 / val1)
 }
 
@@ -51,8 +50,5 @@ type DDiv struct {
 func (_ *DDiv) Execute(frame *rtda.Frame) {
 	val1 := frame.PopDouble()
 	val2 := frame.PopDouble()
-	if val1 == 0 {
-		//todo
-	}
 	frame.PushDouble(val2 / val1)
 }
