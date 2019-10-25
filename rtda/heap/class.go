@@ -236,7 +236,7 @@ func (class *Class) isSubClassOf(c *Class) bool {
 New Array
  */
 func (class *Class) NewArray(count uint) *Object {
-
+	return NewRefArray(class, count)
 }
 
 

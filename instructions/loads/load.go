@@ -127,7 +127,7 @@ func (load *SALoad) Execute(frame *rtda.Frame) {
 func _aLoadPop(frame *rtda.Frame) (*heap.Object, int32, bool) {
 	index := frame.PopInt()
 	arrRef := frame.PopRef()
-	if arrRef != nil {
+	if arrRef == nil {
 		frame.Thread.ThrowNEP()
 		return nil, 0, false
 	}
