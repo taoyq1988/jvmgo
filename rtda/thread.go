@@ -100,7 +100,7 @@ func (thread *Thread) InvokeMethod(method *heap.Method) {
 			thisObj := newFrame.GetThis()
 			monitor = thisObj.Monitor
 		}
-		
+
 		monitor.Enter(thread)
 		newFrame.AppendOnPopAction(func(*Frame) {
 			monitor.Exit(thread)

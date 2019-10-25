@@ -104,7 +104,6 @@ func (class *Class) MarkFullyInitialized() {
 	class.initState = _fullyInitialized
 }
 
-
 /**
 GetField
 */
@@ -161,7 +160,6 @@ func (class *Class) GetClinitMethod() *Method {
 	return class.getDeclaredMethod(clinitMethodName, clinitMethodDesc, true)
 }
 
-
 /**
 judge function
 */
@@ -193,7 +191,6 @@ func (class *Class) arrayClass() *Class {
 	arrayClassName := getArrayClassName(class.Name)
 	return bootLoader.LoadClass(arrayClassName)
 }
-
 
 /**
 isinstanceof && cast
@@ -242,14 +239,12 @@ func (class *Class) isSubClassOf(c *Class) bool {
 	return false
 }
 
-
 /**
 New Array
- */
+*/
 func (class *Class) NewArray(count uint) *Object {
 	return NewRefArray(class, count)
 }
-
 
 /**
 Create class

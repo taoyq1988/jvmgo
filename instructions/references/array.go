@@ -25,7 +25,6 @@ func (array *NewArray) Execute(frame *rtda.Frame) {
 	frame.PushRef(arr)
 }
 
-
 type ANewArray struct {
 	base.Index16Instruction
 }
@@ -48,9 +47,8 @@ func (array *ANewArray) Execute(frame *rtda.Frame) {
 	}
 }
 
-
 type MultiANewArray struct {
-	index uint16
+	index      uint16
 	dimensions uint8
 }
 
@@ -91,7 +89,6 @@ func _newMultiArray(counts []heap.Slot, arrClass *heap.Class) *heap.Object {
 	}
 	return arr
 }
-
 
 type ArrayLength struct {
 	base.NoOperandsInstruction

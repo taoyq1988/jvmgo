@@ -29,7 +29,7 @@ func (invoke *InvokeSpecial) Execute(frame *rtda.Frame) {
 // Invoke instance method; dispatch based on class
 type InvokeVirtual struct {
 	base.Index16Instruction
-	kMethodRef *heap.ConstantMethodRef
+	kMethodRef    *heap.ConstantMethodRef
 	argSlotsCount uint
 }
 
@@ -38,11 +38,16 @@ func (invoke *InvokeVirtual) Execute(frame *rtda.Frame) {
 	methodRef := cp.GetConstant(invoke.Index).(*heap.ConstantMethodRef)
 	if methodRef.Name() == "println" {
 		switch methodRef.Descriptor() {
-		case "()V": fmt.Println("**")
-		case "(B)V":fmt.Println("**",frame.PopInt())
-		case "(I)V":fmt.Println("**", frame.PopInt())
-		case "(J)V":fmt.Println("**", frame.PopLong())
-		case "(Z)V":fmt.Println("**", frame.PopInt() != 0)
+		case "()V":
+			fmt.Println("**")
+		case "(B)V":
+			fmt.Println("**", frame.PopInt())
+		case "(I)V":
+			fmt.Println("**", frame.PopInt())
+		case "(J)V":
+			fmt.Println("**", frame.PopLong())
+		case "(Z)V":
+			fmt.Println("**", frame.PopInt() != 0)
 		case "(Ljava/lang/String;)V":
 			jStr := frame.PopRef()
 			goStr := heap.JSToGoStr(jStr)
@@ -95,11 +100,10 @@ func (invoke *InvokeStatic) Execute(frame *rtda.Frame) {
 	frame.Thread.InvokeMethod(invoke.method)
 }
 
-
 // Invoke interface method
 type InvokeInterface struct {
-	index uint
-	kMethodRef *heap.ConstantInterfaceMethodRef
+	index         uint
+	kMethodRef    *heap.ConstantInterfaceMethodRef
 	argSlotsCount uint
 }
 

@@ -35,10 +35,9 @@ func (object *Object) initFields() {
 	}
 }
 
-
 /**
 Object Array
- */
+*/
 func NewArray(arrClass *Class, count uint) *Object {
 	if arrClass.IsPrimitiveArray() {
 		return newPrimitiveArray(arrClass, count)
@@ -103,10 +102,9 @@ func (obj *Object) Longs() []int64     { return obj.Fields.([]int64) }
 func (obj *Object) Floats() []float32  { return obj.Fields.([]float32) }
 func (obj *Object) Doubles() []float64 { return obj.Fields.([]float64) }
 
-
 /**
 InstanceOf
- */
+*/
 func (obj *Object) IsInstanceOf(class *Class) bool {
 	s, t := obj.Class, class
 	return checkcast(s, t)
@@ -148,7 +146,7 @@ func checkcast(s, t *Class) bool {
 
 /**
 reflection
- */
+*/
 func (obj *Object) GetFieldValue(fieldName, descriptor string) Slot {
 	field := obj.Class.GetInstanceField(fieldName, descriptor)
 	return field.GetValue(obj)

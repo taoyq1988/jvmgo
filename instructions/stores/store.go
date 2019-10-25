@@ -28,7 +28,7 @@ func (store StoreX) Execute(frame *rtda.Frame) {
 
 /**
 Array Store
- */
+*/
 type IAStore struct {
 	base.NoOperandsInstruction
 }

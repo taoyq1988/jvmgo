@@ -15,15 +15,15 @@ const (
 )
 
 var (
-	VoidPrimitiveType = PrimitiveType{"V", "[V", "void", "java/lang/Void"}
+	VoidPrimitiveType    = PrimitiveType{"V", "[V", "void", "java/lang/Void"}
 	BooleanPrimitiveType = PrimitiveType{"Z", "[Z", "boolean", "java/lang/Boolean"}
-	BytePrimitiveType = PrimitiveType{"B", "[B", "byte", "java/lang/Byte"}
-	CharPrimitiveType = PrimitiveType{"C", "[C", "char", "java/lang/Character"}
-	ShortPrimitiveType = PrimitiveType{"S", "[S", "short", "java/lang/Short"}
-	IntPrimitiveType = PrimitiveType{"I", "[I", "int", "java/lang/Integer"}
-	LongPrimitiveType = PrimitiveType{"J", "[J", "long", "java/lang/Long"}
-	FloatPrimitiveType = PrimitiveType{"F", "[F", "float", "java/lang/Float"}
-	DoublePrimitiveType = PrimitiveType{"D", "[D", "double", "java/lang/Double"}
+	BytePrimitiveType    = PrimitiveType{"B", "[B", "byte", "java/lang/Byte"}
+	CharPrimitiveType    = PrimitiveType{"C", "[C", "char", "java/lang/Character"}
+	ShortPrimitiveType   = PrimitiveType{"S", "[S", "short", "java/lang/Short"}
+	IntPrimitiveType     = PrimitiveType{"I", "[I", "int", "java/lang/Integer"}
+	LongPrimitiveType    = PrimitiveType{"J", "[J", "long", "java/lang/Long"}
+	FloatPrimitiveType   = PrimitiveType{"F", "[F", "float", "java/lang/Float"}
+	DoublePrimitiveType  = PrimitiveType{"D", "[D", "double", "java/lang/Double"}
 
 	PrimitiveTypes = []PrimitiveType{
 		VoidPrimitiveType,
