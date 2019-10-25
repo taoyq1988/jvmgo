@@ -45,6 +45,13 @@ func InitBootLoader(cp *classpath.ClassPath, verbose bool) {
 	bootLoader._init()
 }
 
+func (loader *ClassLoader) getClass(name string) *Class {
+	if class, ok := loader.classMap[name]; ok {
+		return class
+	}
+	panic("class not loaded " + name)
+}
+
 func (loader *ClassLoader) _init() {
 	_jlObjectClass = loader.LoadClass(jlObjectClassName)
 	_jlClassClass = loader.LoadClass(jlClassClassName)

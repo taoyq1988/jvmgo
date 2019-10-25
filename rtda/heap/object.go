@@ -1,6 +1,9 @@
 package heap
 
-import "sync"
+import (
+	"reflect"
+	"sync"
+)
 
 type Object struct {
 	Class  *Class
@@ -12,7 +15,13 @@ type Object struct {
 }
 
 func newObj(class *Class, fields, extra interface{}) *Object {
-	return &Object{class, fields, extra, newMonitor(), &sync.RWMutex{}}
+	return &Object{
+		Class:   class,
+		Fields:  fields,
+		Extra:   extra,
+		Monitor: newMonitor(),
+		lock:    &sync.RWMutex{},
+	}
 }
 
 func (object *Object) initFields() {
@@ -26,6 +35,70 @@ func (object *Object) initFields() {
 	}
 }
 
+
+/**
+Object Array
+ */
+func NewArray(arrClass *Class, count uint) *Object {
+	if arrClass.IsPrimitiveArray() {
+		return newPrimitiveArray(arrClass, count)
+	}
+	componentClass := arrClass.ComponentClass()
+	return NewRefArray(componentClass, count)
+}
+
+func NewPrimitiveArray(aType uint8, count uint) *Object {
+	class := getPrimitiveClassByType(aType)
+	return newPrimitiveArray(class, count)
+}
+
+func newPrimitiveArray(arrClass *Class, count uint) *Object {
+	switch arrClass.Name {
+	case BooleanPrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]int8, count), nil)
+	case BytePrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]int8, count), nil)
+	case CharPrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]uint16, count), nil)
+	case ShortPrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]int16, count), nil)
+	case IntPrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]int32, count), nil)
+	case LongPrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]int64, count), nil)
+	case FloatPrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]float32, count), nil)
+	case DoublePrimitiveType.ArrayClassName:
+		return newObj(arrClass, make([]float64, count), nil)
+	default:
+		panic("not primitive array " + arrClass.Name)
+	}
+}
+
+func NewRefArray(componentClass *Class, count uint) *Object {
+	arrClass := componentClass.arrayClass()
+	components := make([]*Object, count)
+	return newObj(arrClass, components, nil)
+}
+
+func ArrayLength(arr *Object) int32 {
+	return int32(reflect.ValueOf(arr.Fields).Len())
+}
+
+func (obj *Object) Refs() []*Object    { return obj.Fields.([]*Object) }
+func (obj *Object) Booleans() []int8   { return obj.Fields.([]int8) }
+func (obj *Object) Bytes() []int8      { return obj.Fields.([]int8) }
+func (obj *Object) Chars() []uint16    { return obj.Fields.([]uint16) }
+func (obj *Object) Shorts() []int16    { return obj.Fields.([]int16) }
+func (obj *Object) Ints() []int32      { return obj.Fields.([]int32) }
+func (obj *Object) Longs() []int64     { return obj.Fields.([]int64) }
+func (obj *Object) Floats() []float32  { return obj.Fields.([]float32) }
+func (obj *Object) Doubles() []float64 { return obj.Fields.([]float64) }
+
+
+/**
+InstanceOf
+ */
 func (obj *Object) IsInstanceOf(class *Class) bool {
 	s, t := obj.Class, class
 	return checkcast(s, t)

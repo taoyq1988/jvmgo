@@ -54,6 +54,14 @@ var (
 	aload_1     = &LoadN{N: 1}
 	aload_2     = &LoadN{N: 2}
 	aload_3     = &LoadN{N: 3}
+	iaload = &IALoad{}
+	laload = &LALoad{}
+	faload = &FALoad{}
+	daload = &DALoad{}
+	aaload = &AALoad{}
+	baload = &BALoad{}
+	caload = &CALoad{}
+	saload = &SALoad{}
 	istore_0    = &StoreX{X: 0}
 	istore_1    = &StoreX{X: 1}
 	istore_2    = &StoreX{X: 2}
@@ -74,6 +82,14 @@ var (
 	astore_1    = &StoreX{X: 1}
 	astore_2    = &StoreX{X: 2}
 	astore_3    = &StoreX{X: 3}
+	iastore = &IAStore{}
+	lastore = &LAStore{}
+	fastore = &FAStore{}
+	dastore = &DAStore{}
+	aastore = &AAStore{}
+	bastore = &BAStore{}
+	castore = &CAStore{}
+	sastore = &SAStore{}
 	pop         = &Pop{}
 	pop2        = &Pop2{}
 	dup         = &Dup{}
@@ -241,14 +257,22 @@ func NewInstruction(opcode byte) base.Instruction {
 		return aload_2
 	case OpALoad3:
 		return aload_3
-	//case OpIALoad: //TODO
-	//case OpLALoad: //TODO
-	//case OpFALoad: //todo
-	//case OpDALoad: //todo
-	//case OpAALoad: //todo
-	//case OpBALoad: //todo
-	//case OpCALoad: //todo
-	//case OpSALoad: //todo
+	case OpIALoad:
+		return iaload
+	case OpLALoad:
+		return laload
+	case OpFALoad:
+		return faload
+	case OpDALoad:
+		return daload
+	case OpAALoad:
+		return aaload
+	case OpBALoad:
+		return baload
+	case OpCALoad:
+		return caload
+	case OpSALoad:
+		return saload
 	case OpIStore:
 		return &Store{}
 	case OpLStore:
@@ -299,14 +323,22 @@ func NewInstruction(opcode byte) base.Instruction {
 		return astore_2
 	case OpAStore3:
 		return astore_3
-	//case OpIAStore:
-	//case OpLAStore:
-	//case OpFAStore:
-	//case OpDAStore:
-	//case OpAAStore:
-	//case OpBAStore:
-	//case OpCAStore:
-	//case OpSAStore:
+	case OpIAStore:
+		return iastore
+	case OpLAStore:
+		return lastore
+	case OpFAStore:
+		return fastore
+	case OpDAStore:
+		return dastore
+	case OpAAStore:
+		return aastore
+	case OpBAStore:
+		return bastore
+	case OpCAStore:
+		return castore
+	case OpSAStore:
+		return sastore
 	case OpPop:
 		return pop
 	case OpPop2:
@@ -508,9 +540,12 @@ func NewInstruction(opcode byte) base.Instruction {
 	//case OpInvokeDynamic:
 	case OpNew:
 		return &New{}
-	//case OpNewArray:
-	//case OpANewArray:
-	//case OpArrayLength:
+	case OpNewArray:
+		return &NewArray{}
+	case OpANewArray:
+		return &ANewArray{}
+	case OpArrayLength:
+		return &ArrayLength{}
 	//case OpAThrow:
 	case OpCheckCast:
 		return &CheckCast{}

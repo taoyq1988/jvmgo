@@ -127,3 +127,11 @@ func (thread *Thread) ThrowClassCastException(from, to *heap.Class) {
 	//msg := fmt.Sprintf("%v cannot be cast to %v", from.NameJlsFormat(), to.NameJlsFormat())
 	//thread.throwExceptionS("java/lang/ClassCastException", msg)
 }
+
+func (thread *Thread) ThrowNegativeArraySizeException() {
+
+}
+
+func (thread *Thread) ThrowArrayIndexOutOfBoundsException(index int32) {
+
+}

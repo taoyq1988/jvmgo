@@ -104,6 +104,10 @@ func (class *Class) MarkFullyInitialized() {
 	class.initState = _fullyInitialized
 }
 
+
+/**
+GetMethod
+*/
 func (class *Class) getField(name, descriptor string, isStatic bool) *Field {
 	for k := class; k != nil; k = k.SuperClass {
 		for _, field := range k.Fields {
@@ -115,9 +119,6 @@ func (class *Class) getField(name, descriptor string, isStatic bool) *Field {
 	return nil
 }
 
-/**
-GetMethod
-*/
 func (class *Class) getMethod(name, descriptor string, isStatic bool) *Method {
 	for k := class; k != nil; k = k.SuperClass {
 		for _, method := range k.Methods {
@@ -149,11 +150,17 @@ func (class *Class) GetClinitMethod() *Method {
 	return class.getDeclaredMethod(clinitMethodName, clinitMethodDesc, true)
 }
 
+
 /**
 judge function
 */
 func (class *Class) IsArray() bool {
 	return class.Name[0] == '['
+}
+
+func (class *Class) IsPrimitiveArray() bool {
+	// todo can be more clear
+	return class.IsArray() && len(class.Name) == 2
 }
 
 func (class *Class) isJlObject() bool {
@@ -170,6 +177,12 @@ func (class *Class) ComponentClass() *Class {
 	componentClassName := getComponentClassName(class.Name)
 	return bootLoader.LoadClass(componentClassName)
 }
+
+func (class *Class) arrayClass() *Class {
+	arrayClassName := getArrayClassName(class.Name)
+	return bootLoader.LoadClass(arrayClassName)
+}
+
 
 /**
 isinstanceof && cast
@@ -217,6 +230,15 @@ func (class *Class) isSubClassOf(c *Class) bool {
 	}
 	return false
 }
+
+
+/**
+New Array
+ */
+func (class *Class) NewArray(count uint) *Object {
+
+}
+
 
 /**
 Create class
