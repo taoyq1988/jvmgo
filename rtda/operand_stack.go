@@ -119,3 +119,10 @@ func (stack *OperandStack) PopTops(n uint) []heap.Slot {
 func (stack *OperandStack) TopRef(n uint) *heap.Object {
 	return stack.slots[stack.size-n-1].Ref
 }
+
+func (stack *OperandStack) ClearStack() {
+	stack.size = 0
+	for i := range stack.slots {
+		stack.slots[i] = heap.EmptySlot
+	}
+}

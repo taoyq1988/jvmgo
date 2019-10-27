@@ -45,7 +45,7 @@ func park(frame *rtda.Frame) {
 	//	}
 	//}
 
-	frame.Thread.ThrowNEP() //fixme
+	frame.Thread.ThrowNPE() //fixme
 }
 
 //  public native void unpark(Object thread);
@@ -54,5 +54,5 @@ func unpark(frame *rtda.Frame) {
 	threadObj := frame.GetRefVar(1)
 
 	thread := threadObj.Extra.(*rtda.Thread)
-	thread.ThrowNEP() //fixme
+	thread.ThrowNPE() //fixme
 }

@@ -8,8 +8,9 @@ import (
 	"github.com/taoyq1988/jvmgo/rtda/heap"
 )
 
-const isLog = true
+const isLog = false
 
+var _mainThreadGroup *heap.Object
 var _bootClasses = []string{
 	"java/lang/Class",
 	"java/lang/String",
@@ -22,8 +23,8 @@ var _bootClasses = []string{
 func Interpret(method *heap.Method) {
 	thread := rtda.NewThread()
 	frame := thread.NewFrame(method)
-	thread.PushFrame(frame)
 	initBootClass(thread)
+	thread.PushFrame(frame)
 	jlSystemNotReady(thread)
 	defer catchError(frame)
 	loop(thread)
@@ -37,6 +38,35 @@ func initBootClass(thread *rtda.Thread) {
 			thread.InitClass(class)
 		}
 	}
+}
+
+func mainThreadNotReady(thread *rtda.Thread) bool {
+	classLoader := heap.BootLoader()
+	frame := thread.CurrentFrame()
+	if _mainThreadGroup == nil {
+		undoExec(thread)
+		threadGroupClass := classLoader.LoadClass("java/lang/ThreadGroup")
+		_mainThreadGroup = threadGroupClass.NewObj()
+		initMethod := threadGroupClass.GetConstructor("()V")
+		frame.PushRef(_mainThreadGroup) // this
+		thread.InvokeMethod(initMethod)
+		return true
+	}
+	if thread.JThread == nil {
+		undoExec(thread)
+		threadClass := classLoader.LoadClass("java/lang/Thread")
+		mainThreadObj := threadClass.NewObjWithExtra(thread)
+		mainThreadObj.SetFieldValue("priority", "I", heap.NewIntSlot(1))
+		thread.JThread = mainThreadObj
+
+		initMethod := threadClass.GetConstructor("(Ljava/lang/ThreadGroup;Ljava/lang/String;)V")
+		frame.PushRef(mainThreadObj)            // this
+		frame.PushRef(_mainThreadGroup)         // group
+		frame.PushRef(heap.JSFromGoStr("main")) // name
+		thread.InvokeMethod(initMethod)
+		return true
+	}
+	return false
 }
 
 func jlSystemNotReady(thread *rtda.Thread) bool {
@@ -67,7 +97,7 @@ func catchError(frame *rtda.Frame) {
 }
 
 func logInstruction(frame *rtda.Frame, inst base.Instruction) {
-	fmt.Printf("[execute] method %s, class %s, inst %T %v, pc %d\n", frame.Method.Name, frame.Method.Class.Name, inst, inst, frame.Thread.PC)
+	fmt.Printf("[execute] method %s, method desc %s, class %s, inst %T %v, pc %d\n", frame.Method.Name, frame.Method.Descriptor, frame.Method.Class.Name, inst, inst, frame.Thread.PC)
 	fmt.Println("[execute] localvars", frame.LocalVars)
 	fmt.Println("[execute] operandstack", frame.OperandStack)
 	fmt.Println()

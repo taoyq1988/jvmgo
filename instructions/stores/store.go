@@ -135,7 +135,7 @@ func (store *SAStore) Execute(frame *rtda.Frame) {
 
 func _checkArrayAndIndex(frame *rtda.Frame, arrRef *heap.Object, index int32) bool {
 	if arrRef == nil {
-		frame.Thread.ThrowNEP()
+		frame.Thread.ThrowNPE()
 		return false
 	}
 

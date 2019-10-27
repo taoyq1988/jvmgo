@@ -19,149 +19,152 @@ import (
 
 // No Operand Instructions(singleton)
 var (
-	nop         = &NOP{}
-	aconst_null = &Const{K: heap.EmptySlot}
-	iconst_m1   = &Const{K: heap.NewIntSlot(-1)}
-	iconst_0    = &Const{K: heap.NewIntSlot(0)}
-	iconst_1    = &Const{K: heap.NewIntSlot(1)}
-	iconst_2    = &Const{K: heap.NewIntSlot(2)}
-	iconst_3    = &Const{K: heap.NewIntSlot(3)}
-	iconst_4    = &Const{K: heap.NewIntSlot(4)}
-	iconst_5    = &Const{K: heap.NewIntSlot(5)}
-	lconst_0    = &Const{K: heap.NewLongSlot(0), L: true}
-	lconst_1    = &Const{K: heap.NewLongSlot(1), L: true}
-	fconst_0    = &Const{K: heap.NewFloatSlot(0.0)}
-	fconst_1    = &Const{K: heap.NewFloatSlot(1.0)}
-	fconst_2    = &Const{K: heap.NewFloatSlot(2.0)}
-	dconst_0    = &Const{K: heap.NewDoubleSlot(0.0), L: true}
-	dconst_1    = &Const{K: heap.NewDoubleSlot(1.0), L: true}
-	iload_0     = &LoadN{N: 0}
-	iload_1     = &LoadN{N: 1}
-	iload_2     = &LoadN{N: 2}
-	iload_3     = &LoadN{N: 3}
-	lload_0     = &LoadN{N: 0, L: true}
-	lload_1     = &LoadN{N: 1, L: true}
-	lload_2     = &LoadN{N: 2, L: true}
-	lload_3     = &LoadN{N: 3, L: true}
-	fload_0     = &LoadN{N: 0}
-	fload_1     = &LoadN{N: 1}
-	fload_2     = &LoadN{N: 2}
-	fload_3     = &LoadN{N: 3}
-	dload_0     = &LoadN{N: 0, L: true}
-	dload_1     = &LoadN{N: 1, L: true}
-	dload_2     = &LoadN{N: 2, L: true}
-	dload_3     = &LoadN{N: 3, L: true}
-	aload_0     = &LoadN{N: 0}
-	aload_1     = &LoadN{N: 1}
-	aload_2     = &LoadN{N: 2}
-	aload_3     = &LoadN{N: 3}
-	iaload      = &IALoad{}
-	laload      = &LALoad{}
-	faload      = &FALoad{}
-	daload      = &DALoad{}
-	aaload      = &AALoad{}
-	baload      = &BALoad{}
-	caload      = &CALoad{}
-	saload      = &SALoad{}
-	istore_0    = &StoreX{X: 0}
-	istore_1    = &StoreX{X: 1}
-	istore_2    = &StoreX{X: 2}
-	istore_3    = &StoreX{X: 3}
-	lstore_0    = &StoreX{X: 0, L: true}
-	lstore_1    = &StoreX{X: 1, L: true}
-	lstore_2    = &StoreX{X: 2, L: true}
-	lstore_3    = &StoreX{X: 3, L: true}
-	fstore_0    = &StoreX{X: 0}
-	fstore_1    = &StoreX{X: 1}
-	fstore_2    = &StoreX{X: 2}
-	fstore_3    = &StoreX{X: 3}
-	dstore_0    = &StoreX{X: 0, L: true}
-	dstore_1    = &StoreX{X: 1, L: true}
-	dstore_2    = &StoreX{X: 2, L: true}
-	dstore_3    = &StoreX{X: 3, L: true}
-	astore_0    = &StoreX{X: 0}
-	astore_1    = &StoreX{X: 1}
-	astore_2    = &StoreX{X: 2}
-	astore_3    = &StoreX{X: 3}
-	iastore     = &IAStore{}
-	lastore     = &LAStore{}
-	fastore     = &FAStore{}
-	dastore     = &DAStore{}
-	aastore     = &AAStore{}
-	bastore     = &BAStore{}
-	castore     = &CAStore{}
-	sastore     = &SAStore{}
-	pop         = &Pop{}
-	pop2        = &Pop2{}
-	dup         = &Dup{}
-	dupx1       = &DupX1{}
-	dupx2       = &DupX2{}
-	dup2        = &Dup2{}
-	dup2x1      = &Dup2X1{}
-	dup2x2      = &Dup2X2{}
-	swap        = &Swap{}
-	iadd        = &IAdd{}
-	ladd        = &LAdd{}
-	fadd        = &FAdd{}
-	dadd        = &DAdd{}
-	isub        = &ISub{}
-	lsub        = &LSub{}
-	fsub        = &FSub{}
-	dsub        = &DSub{}
-	imul        = &IMul{}
-	lmul        = &LMul{}
-	fmul        = &FMul{}
-	dmul        = &DMul{}
-	idiv        = &IDiv{}
-	ldiv        = &LDiv{}
-	fdiv        = &FDiv{}
-	ddiv        = &DDiv{}
-	irem        = &IRem{}
-	lrem        = &LRem{}
-	frem        = &FRem{}
-	drem        = &DRem{}
-	ineg        = &INeg{}
-	lneg        = &LNeg{}
-	fneg        = &FNeg{}
-	dneg        = &DNeg{}
-	ishl        = &IShl{}
-	lshl        = &LShl{}
-	ishr        = &IShr{}
-	lshr        = &LShr{}
-	iushr       = &IUShr{}
-	lushr       = &LUShr{}
-	iand        = &IAnd{}
-	land        = &LAnd{}
-	ior         = &IOr{}
-	lor         = &LOr{}
-	ixor        = &IXor{}
-	lxor        = &LXor{}
-	i2l         = &I2L{}
-	i2f         = &I2F{}
-	i2d         = &I2D{}
-	l2i         = &L2I{}
-	l2f         = &L2F{}
-	l2d         = &L2D{}
-	f2i         = &F2I{}
-	f2l         = &F2L{}
-	f2d         = &F2D{}
-	d2i         = &D2I{}
-	d2l         = &D2L{}
-	d2f         = &D2F{}
-	i2b         = &I2B{}
-	i2c         = &I2C{}
-	i2S         = &I2S{}
-	lcmp        = &LCmp{}
-	fcmpl       = &FCmpL{}
-	fcmpg       = &FCmpG{}
-	dcmpl       = &DCmpL{}
-	dcmpg       = &DCmpG{}
-	ireturn     = &IReturn{}
-	lreturn     = &LReturn{}
-	freturn     = &FReturn{}
-	dreturn     = &DReturn{}
-	areturn     = &AReturn{}
-	_return     = &Return{}
+	nop          = &NOP{}
+	aconst_null  = &Const{K: heap.EmptySlot}
+	iconst_m1    = &Const{K: heap.NewIntSlot(-1)}
+	iconst_0     = &Const{K: heap.NewIntSlot(0)}
+	iconst_1     = &Const{K: heap.NewIntSlot(1)}
+	iconst_2     = &Const{K: heap.NewIntSlot(2)}
+	iconst_3     = &Const{K: heap.NewIntSlot(3)}
+	iconst_4     = &Const{K: heap.NewIntSlot(4)}
+	iconst_5     = &Const{K: heap.NewIntSlot(5)}
+	lconst_0     = &Const{K: heap.NewLongSlot(0), L: true}
+	lconst_1     = &Const{K: heap.NewLongSlot(1), L: true}
+	fconst_0     = &Const{K: heap.NewFloatSlot(0.0)}
+	fconst_1     = &Const{K: heap.NewFloatSlot(1.0)}
+	fconst_2     = &Const{K: heap.NewFloatSlot(2.0)}
+	dconst_0     = &Const{K: heap.NewDoubleSlot(0.0), L: true}
+	dconst_1     = &Const{K: heap.NewDoubleSlot(1.0), L: true}
+	iload_0      = &LoadN{N: 0}
+	iload_1      = &LoadN{N: 1}
+	iload_2      = &LoadN{N: 2}
+	iload_3      = &LoadN{N: 3}
+	lload_0      = &LoadN{N: 0, L: true}
+	lload_1      = &LoadN{N: 1, L: true}
+	lload_2      = &LoadN{N: 2, L: true}
+	lload_3      = &LoadN{N: 3, L: true}
+	fload_0      = &LoadN{N: 0}
+	fload_1      = &LoadN{N: 1}
+	fload_2      = &LoadN{N: 2}
+	fload_3      = &LoadN{N: 3}
+	dload_0      = &LoadN{N: 0, L: true}
+	dload_1      = &LoadN{N: 1, L: true}
+	dload_2      = &LoadN{N: 2, L: true}
+	dload_3      = &LoadN{N: 3, L: true}
+	aload_0      = &LoadN{N: 0}
+	aload_1      = &LoadN{N: 1}
+	aload_2      = &LoadN{N: 2}
+	aload_3      = &LoadN{N: 3}
+	iaload       = &IALoad{}
+	laload       = &LALoad{}
+	faload       = &FALoad{}
+	daload       = &DALoad{}
+	aaload       = &AALoad{}
+	baload       = &BALoad{}
+	caload       = &CALoad{}
+	saload       = &SALoad{}
+	istore_0     = &StoreX{X: 0}
+	istore_1     = &StoreX{X: 1}
+	istore_2     = &StoreX{X: 2}
+	istore_3     = &StoreX{X: 3}
+	lstore_0     = &StoreX{X: 0, L: true}
+	lstore_1     = &StoreX{X: 1, L: true}
+	lstore_2     = &StoreX{X: 2, L: true}
+	lstore_3     = &StoreX{X: 3, L: true}
+	fstore_0     = &StoreX{X: 0}
+	fstore_1     = &StoreX{X: 1}
+	fstore_2     = &StoreX{X: 2}
+	fstore_3     = &StoreX{X: 3}
+	dstore_0     = &StoreX{X: 0, L: true}
+	dstore_1     = &StoreX{X: 1, L: true}
+	dstore_2     = &StoreX{X: 2, L: true}
+	dstore_3     = &StoreX{X: 3, L: true}
+	astore_0     = &StoreX{X: 0}
+	astore_1     = &StoreX{X: 1}
+	astore_2     = &StoreX{X: 2}
+	astore_3     = &StoreX{X: 3}
+	iastore      = &IAStore{}
+	lastore      = &LAStore{}
+	fastore      = &FAStore{}
+	dastore      = &DAStore{}
+	aastore      = &AAStore{}
+	bastore      = &BAStore{}
+	castore      = &CAStore{}
+	sastore      = &SAStore{}
+	pop          = &Pop{}
+	pop2         = &Pop2{}
+	dup          = &Dup{}
+	dupx1        = &DupX1{}
+	dupx2        = &DupX2{}
+	dup2         = &Dup2{}
+	dup2x1       = &Dup2X1{}
+	dup2x2       = &Dup2X2{}
+	swap         = &Swap{}
+	iadd         = &IAdd{}
+	ladd         = &LAdd{}
+	fadd         = &FAdd{}
+	dadd         = &DAdd{}
+	isub         = &ISub{}
+	lsub         = &LSub{}
+	fsub         = &FSub{}
+	dsub         = &DSub{}
+	imul         = &IMul{}
+	lmul         = &LMul{}
+	fmul         = &FMul{}
+	dmul         = &DMul{}
+	idiv         = &IDiv{}
+	ldiv         = &LDiv{}
+	fdiv         = &FDiv{}
+	ddiv         = &DDiv{}
+	irem         = &IRem{}
+	lrem         = &LRem{}
+	frem         = &FRem{}
+	drem         = &DRem{}
+	ineg         = &INeg{}
+	lneg         = &LNeg{}
+	fneg         = &FNeg{}
+	dneg         = &DNeg{}
+	ishl         = &IShl{}
+	lshl         = &LShl{}
+	ishr         = &IShr{}
+	lshr         = &LShr{}
+	iushr        = &IUShr{}
+	lushr        = &LUShr{}
+	iand         = &IAnd{}
+	land         = &LAnd{}
+	ior          = &IOr{}
+	lor          = &LOr{}
+	ixor         = &IXor{}
+	lxor         = &LXor{}
+	i2l          = &I2L{}
+	i2f          = &I2F{}
+	i2d          = &I2D{}
+	l2i          = &L2I{}
+	l2f          = &L2F{}
+	l2d          = &L2D{}
+	f2i          = &F2I{}
+	f2l          = &F2L{}
+	f2d          = &F2D{}
+	d2i          = &D2I{}
+	d2l          = &D2L{}
+	d2f          = &D2F{}
+	i2b          = &I2B{}
+	i2c          = &I2C{}
+	i2S          = &I2S{}
+	lcmp         = &LCmp{}
+	fcmpl        = &FCmpL{}
+	fcmpg        = &FCmpG{}
+	dcmpl        = &DCmpL{}
+	dcmpg        = &DCmpG{}
+	ireturn      = &IReturn{}
+	lreturn      = &LReturn{}
+	freturn      = &FReturn{}
+	dreturn      = &DReturn{}
+	areturn      = &AReturn{}
+	_return      = &Return{}
+	athrow       = &AThrow{}
+	monitorEnter = &MonitorEnter{}
+	monitorExit  = &MonitorExit{}
 
 	//reserved
 	invokeNative = &InvokeNative{}
@@ -417,9 +420,9 @@ func NewInstruction(opcode byte) base.Instruction {
 		return ishr
 	case OpLShr:
 		return lshr
-	case OpIUshr:
+	case OpIUShr:
 		return iushr
-	case OpLUshr:
+	case OpLUShr:
 		return lushr
 	case OpIAnd:
 		return iand
@@ -550,16 +553,20 @@ func NewInstruction(opcode byte) base.Instruction {
 		return &ANewArray{}
 	case OpArrayLength:
 		return &ArrayLength{}
-	//case OpAThrow:
+	case OpAThrow:
+		return athrow
 	case OpCheckCast:
 		return &CheckCast{}
 	case OpInstanceOf:
 		return &InstanceOf{}
-	//case OpMonitorEnter:
-	//case OpMonitorExit:
+	case OpMonitorEnter:
+		return monitorEnter
+	case OpMonitorExit:
+		return monitorExit
 	case OpWide:
 		return &Wide{}
-	//case OpMultiANewArray:
+	case OpMultiANewArray:
+		return &MultiANewArray{}
 	case OpIfNull:
 		return &IfNull{}
 	case OpIfNonNull:

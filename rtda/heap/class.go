@@ -318,3 +318,16 @@ func getEnclosingMethod(cf *classfile.Classfile) *EnclosingMethod {
 	}
 	return nil
 }
+
+/**
+Reflection
+*/
+func (class *Class) GetStaticValue(fieldName, fieldDescriptor string) Slot {
+	field := class.GetStaticField(fieldName, fieldDescriptor)
+	return field.GetStaticValue()
+}
+
+func (class *Class) SetStaticValue(fieldName, fieldDescriptor string, value Slot) {
+	field := class.GetStaticField(fieldName, fieldDescriptor)
+	field.PutStaticValue(value)
+}

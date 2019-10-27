@@ -32,7 +32,7 @@ func JSFromGoStr(goStr string) *Object {
 func JSFromChars(chars []uint16) *Object {
 	charArr := NewCharArray(chars)
 	jStr := bootLoader.JLStringClass().NewObj()
-	jStr.SetFieldValue("data", "Ljava/lang/Object;", NewRefSlot(charArr))
+	jStr.SetFieldValue("value", "[C", NewRefSlot(charArr))
 	return jStr
 }
 
@@ -43,6 +43,6 @@ func JSToGoStr(jStr *Object) string {
 
 // java.lang.String -> java char[]
 func JSToChars(jStr *Object) []uint16 {
-	charArr := jStr.GetFieldValue("data", "Ljava/lang/Object;").Ref
+	charArr := jStr.GetFieldValue("value", "[C").Ref
 	return charArr.Chars()
 }

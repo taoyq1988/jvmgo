@@ -93,6 +93,15 @@ func ArrayLength(arr *Object) int32 {
 	return int32(reflect.ValueOf(arr.Fields).Len())
 }
 
+func ArrayCopy(src, dst *Object, srcPos, dstPos, length int32) {
+	srcArr := reflect.ValueOf(src.Fields)
+	dstArr := reflect.ValueOf(dst.Fields)
+	reflect.Copy(
+		dstArr.Slice(int(dstPos), int(dstPos+length)),
+		srcArr.Slice(int(srcPos), int(srcPos+length)),
+	)
+}
+
 func (obj *Object) Refs() []*Object    { return obj.Fields.([]*Object) }
 func (obj *Object) Booleans() []int8   { return obj.Fields.([]int8) }
 func (obj *Object) Bytes() []int8      { return obj.Fields.([]int8) }
@@ -161,4 +170,12 @@ func (obj *Object) GetFieldValue(fieldName, descriptor string) Slot {
 func (obj *Object) SetFieldValue(fieldName, descriptor string, value Slot) {
 	field := obj.Class.GetInstanceField(fieldName, descriptor)
 	field.PutValue(obj, value)
+}
+
+func (obj *Object) Clone() *Object {
+	fields1 := reflect.ValueOf(obj.Fields)
+	fields2 := reflect.MakeSlice(fields1.Type(), fields1.Len(), fields1.Len())
+	reflect.Copy(fields2, fields1)
+	var extra2 interface{} = nil // todo
+	return newObj(obj.Class, fields2.Interface(), extra2)
 }

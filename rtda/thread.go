@@ -21,6 +21,7 @@ JVM
 type Thread struct {
 	PC    int
 	stack *Stack
+	JThread         *heap.Object // java.lang.Thread
 }
 
 func NewThread() *Thread {
@@ -31,6 +32,10 @@ func NewThread() *Thread {
 
 func (thread *Thread) IsStackEmpty() bool {
 	return thread.stack.isEmpty()
+}
+
+func (thread *Thread) StackDepth() uint {
+	return thread.stack.size
 }
 
 /**
@@ -79,7 +84,15 @@ func (thread *Thread) InitClass(class *heap.Class) {
 Invoke
 */
 func (thread *Thread) InvokeMethod(method *heap.Method) {
-	fmt.Printf("-- goto invoke method %s, class %s, is native %v\n", method.Name, method.Class.Name, method.IsNative())
+	if method.Name == "loadLibrary0" && method.Class.Name == "java/lang/Runtime" {
+		fmt.Println("skip loadlibrary0")
+		return
+	}
+	if method.Name == "loadLibrary0" && method.Class.Name == "java/lang/Runtime" {
+		fmt.Println("skip loadlibrary0")
+		return
+	}
+
 	currentFrame := thread.CurrentFrame()
 	newFrame := thread.NewFrame(method)
 	thread.PushFrame(newFrame)
@@ -121,23 +134,54 @@ func parseArgs(from *Frame, to *Frame, argSlotsCount uint) {
 /**
 Throw
 */
-func (thread *Thread) ThrowNEP() {
-	fmt.Println("null point execption")
+func (thread *Thread) throwException(className, initDesc string, initArgs ...heap.Slot) {
+	class := heap.BootLoader().LoadClass(className)
+	exObj := class.NewObj()
+	athrowFrame := newAthrowFrame(thread, exObj, initArgs)
+	thread.PushFrame(athrowFrame)
+	// init exObj
+	constructor := class.GetConstructor(initDesc)
+	thread.InvokeMethod(constructor)
 }
 
-func (thread *Thread) ThrowClassCastException(from, to *heap.Class) {
-	//msg := fmt.Sprintf("%v cannot be cast to %v", from.NameJlsFormat(), to.NameJlsFormat())
-	//thread.throwExceptionS("java/lang/ClassCastException", msg)
+func (thread *Thread) throwExceptionV(className string) {
+	thread.throwException(className, "()V")
+}
+func (thread *Thread) throwExceptionS(className, msg string) {
+	msgObj := heap.JSFromGoStr(msg)
+	thread.throwException(className, "(Ljava/lang/String;)V", heap.NewRefSlot(msgObj))
+}
+
+func (thread *Thread) HandleUncaughtException(ex *heap.Object) {
+	thread.stack.clear()
+	sysClass := heap.BootLoader().LoadClass("java/lang/System")
+	sysErr := sysClass.GetStaticValue("out", "Ljava/io/PrintStream;").Ref
+	printStackTrace := ex.Class.GetInstanceMethod("printStackTrace", "(Ljava/io/PrintStream;)V")
+
+	newFrame := thread.NewFrame(printStackTrace)
+	newFrame.SetRefVar(0, ex)
+	newFrame.SetRefVar(1, sysErr)
+	thread.PushFrame(newFrame)
+}
+
+func (thread *Thread) ThrowNPE() {
+	thread.throwExceptionV("java/lang/NullPointerException")
 }
 
 func (thread *Thread) ThrowNegativeArraySizeException() {
+	thread.throwExceptionV("java/lang/NegativeArraySizeException")
+}
 
+func (thread *Thread) ThrowClassCastException(from, to *heap.Class) {
+	msg := fmt.Sprintf("%v cannot be cast to %v", from.NameJlsFormat(), to.NameJlsFormat())
+	thread.throwExceptionS("java/lang/ClassCastException", msg)
 }
 
 func (thread *Thread) ThrowArrayIndexOutOfBoundsException(index int32) {
-
+	msg := fmt.Sprintf("%v", index)
+	thread.throwExceptionS("java/lang/ArrayIndexOutOfBoundsException", msg)
 }
 
 func (thread *Thread) ThrowDivByZero() {
-
+	thread.throwExceptionS("java/lang/ArithmeticException", "/ by zero")
 }

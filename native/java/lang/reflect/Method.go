@@ -13,5 +13,3 @@ func init() {
 func _method(method func(frame *rtda.Frame), name, descriptor string) {
 
 }
-
-

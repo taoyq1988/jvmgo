@@ -97,7 +97,7 @@ type ArrayLength struct {
 func (al *ArrayLength) Execute(frame *rtda.Frame) {
 	arrRef := frame.PopRef()
 	if arrRef == nil {
-		frame.Thread.ThrowNEP()
+		frame.Thread.ThrowNPE()
 		return
 	}
 	arrLen := heap.ArrayLength(arrRef)

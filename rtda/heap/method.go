@@ -42,6 +42,22 @@ func (method *Method) GetNativeMethod() interface{} {
 	return method.nativeMethod
 }
 
+func (method *Method) FindExceptionHandle(exClass *Class, pc int) int {
+	for _, handle := range method.exceptionTable {
+		// jvms: The start_pc is inclusive and end_pc is exclusive
+		if pc >= int(handle.StartPc) && pc < int(handle.EndPc) {
+			if handle.CatchType == 0 {
+				return int(handle.HandlerPc)
+			}
+			catchType := method.Class.GetConstantClass(uint(handle.CatchType))
+			if catchType.GetClass() == exClass || catchType.GetClass().isSuperClassOf(exClass) {
+				return int(handle.HandlerPc)
+			}
+		}
+	}
+	return -1
+}
+
 /**
 Judge
 */
@@ -171,4 +187,17 @@ func eachInterfaceMethod(class *Class, f func(*Method)) {
 			f(m)
 		}
 	}
+}
+
+func (method *Method) GetLineNumber(pc int) int {
+	if method.IsNative() {
+		return -2
+	}
+	for i := len(method.lineNumberTable) - 1; i >= 0; i-- {
+		entry := method.lineNumberTable[i]
+		if pc >= int(entry.StartPC) {
+			return int(entry.LineNumber)
+		}
+	}
+	return -1
 }

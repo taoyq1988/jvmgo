@@ -40,7 +40,7 @@ func (invoke *InvokeVirtual) Execute(frame *rtda.Frame) {
 	}
 	ref := frame.TopRef(invoke.argSlotsCount)
 	if ref == nil {
-		frame.Thread.ThrowNEP()
+		frame.Thread.ThrowNPE()
 		return
 	}
 
@@ -95,7 +95,7 @@ func (invoke *InvokeInterface) Execute(frame *rtda.Frame) {
 	}
 	ref := frame.TopRef(invoke.argSlotsCount)
 	if ref == nil {
-		frame.Thread.ThrowNEP()
+		frame.Thread.ThrowNPE()
 		return
 	}
 

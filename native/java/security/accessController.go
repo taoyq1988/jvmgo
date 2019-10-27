@@ -65,4 +65,3 @@ func getStackAccessControlContext(frame *rtda.Frame) {
 	// todo
 	frame.PushRef(nil)
 }
-

@@ -125,8 +125,8 @@ const (
 	OpLShl            = 0x79
 	OpIShr            = 0x7a
 	OpLShr            = 0x7b
-	OpIUshr           = 0x7c
-	OpLUshr           = 0x7d
+	OpIUShr           = 0x7c
+	OpLUShr           = 0x7d
 	OpIAnd            = 0x7e
 	OpLAnd            = 0x7f
 	OpIOr             = 0x80

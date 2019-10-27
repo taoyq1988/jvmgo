@@ -21,7 +21,7 @@ func (putF *PutField) Execute(frame *rtda.Frame) {
 	val := frame.PopL(putF.field.IsLongOrDouble)
 	ref := frame.PopRef()
 	if ref == nil {
-		frame.Thread.ThrowNEP()
+		frame.Thread.ThrowNPE()
 		return
 	}
 	putF.field.PutValue(ref, val)
@@ -41,7 +41,7 @@ func (getF *GetField) Execute(frame *rtda.Frame) {
 
 	ref := frame.PopRef()
 	if ref == nil {
-		frame.Thread.ThrowNEP()
+		frame.Thread.ThrowNPE()
 		return
 	}
 	val := getF.field.GetValue(ref)

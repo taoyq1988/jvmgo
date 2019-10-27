@@ -9,6 +9,7 @@
 jvmgo
 javap
 rt.jar
+rt-zulu.jar
 !/cmd/javap/main.go
 !/cmd/javap
 *.class
