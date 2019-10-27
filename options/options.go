@@ -5,6 +5,7 @@ import "flag"
 const (
 	defaultClasspath = "."
 	defaultBootJar   = "./jar/rt.jar"
+	//defaultBootJar   = "./jdk/build/libs/jdk.jar"
 )
 
 type Options struct {

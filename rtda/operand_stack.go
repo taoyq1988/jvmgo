@@ -7,6 +7,13 @@ type OperandStack struct {
 	slots []heap.Slot
 }
 
+func newOperandStackWithSlots(slots []heap.Slot) OperandStack {
+	return OperandStack{
+		size:  uint(len(slots)),
+		slots: slots,
+	}
+}
+
 func newOperandStack(size uint) OperandStack {
 	slots := make([]heap.Slot, size)
 	return OperandStack{
@@ -29,6 +36,18 @@ func (stack *OperandStack) Pop() heap.Slot {
 	top := stack.slots[stack.size]
 	stack.slots[stack.size] = heap.EmptySlot // help GC
 	return top
+}
+
+func (stack *OperandStack) PushBoolean(val bool) {
+	if val {
+		stack.PushInt(1)
+	} else {
+		stack.PushInt(0)
+	}
+}
+
+func (stack *OperandStack) PopBoolean() bool {
+	return stack.PopInt() == 1
 }
 
 func (stack *OperandStack) PushInt(val int32) {

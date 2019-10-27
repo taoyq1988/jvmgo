@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/taoyq1988/jvmgo/classpath"
 	"github.com/taoyq1988/jvmgo/interpret"
+	_ "github.com/taoyq1988/jvmgo/native"
 	"github.com/taoyq1988/jvmgo/options"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
 	"os"

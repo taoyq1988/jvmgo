@@ -54,7 +54,7 @@ func (thread *Thread) PushFrame(frame *Frame) {
 
 func (thread *Thread) NewFrame(method *heap.Method) *Frame {
 	if method.IsNative() {
-		return nil //todo
+		return newNativeFrame(thread, method)
 	} else {
 		return newFrame(thread, method)
 	}
@@ -62,6 +62,10 @@ func (thread *Thread) NewFrame(method *heap.Method) *Frame {
 
 func (thread *Thread) CurrentFrame() *Frame {
 	return thread.stack.top()
+}
+
+func (thread *Thread) TopFrameN(n uint) *Frame {
+	return thread.stack.topN(n)
 }
 
 /**
@@ -75,15 +79,7 @@ func (thread *Thread) InitClass(class *heap.Class) {
 Invoke
 */
 func (thread *Thread) InvokeMethod(method *heap.Method) {
-	if method.IsNative() {
-		if method.Name == "registerNatives" {
-			thread.PopFrame()
-		} else {
-			fmt.Printf("invoke native method %s, class %s\n", method.Name, method.Class.Name)
-			thread.PopFrame()
-		}
-		return
-	}
+	fmt.Printf("-- goto invoke method %s, class %s, is native %v\n", method.Name, method.Class.Name, method.IsNative())
 	currentFrame := thread.CurrentFrame()
 	newFrame := thread.NewFrame(method)
 	thread.PushFrame(newFrame)
@@ -108,6 +104,12 @@ func (thread *Thread) InvokeMethod(method *heap.Method) {
 	}
 }
 
+func (thread *Thread) InvokeMethodWithShim(method *heap.Method, args []heap.Slot) {
+	shimFrame := newShimFrame(thread, args)
+	thread.PushFrame(shimFrame)
+	thread.InvokeMethod(method)
+}
+
 func parseArgs(from *Frame, to *Frame, argSlotsCount uint) {
 	args := from.PopTops(argSlotsCount)
 	for i := uint(0); i < argSlotsCount; i++ {
@@ -120,7 +122,7 @@ func parseArgs(from *Frame, to *Frame, argSlotsCount uint) {
 Throw
 */
 func (thread *Thread) ThrowNEP() {
-	//todo
+	fmt.Println("null point execption")
 }
 
 func (thread *Thread) ThrowClassCastException(from, to *heap.Class) {

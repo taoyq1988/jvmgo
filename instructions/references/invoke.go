@@ -1,7 +1,6 @@
 package references
 
 import (
-	"fmt"
 	"github.com/taoyq1988/jvmgo/instructions/base"
 	"github.com/taoyq1988/jvmgo/rtda"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
@@ -34,31 +33,6 @@ type InvokeVirtual struct {
 }
 
 func (invoke *InvokeVirtual) Execute(frame *rtda.Frame) {
-	cp := frame.GetConstantPool()
-	methodRef := cp.GetConstant(invoke.Index).(*heap.ConstantMethodRef)
-	if methodRef.Name() == "println" {
-		switch methodRef.Descriptor() {
-		case "()V":
-			fmt.Println("**")
-		case "(B)V":
-			fmt.Println("**", frame.PopInt())
-		case "(I)V":
-			fmt.Println("**", frame.PopInt())
-		case "(J)V":
-			fmt.Println("**", frame.PopLong())
-		case "(Z)V":
-			fmt.Println("**", frame.PopInt() != 0)
-		case "(Ljava/lang/String;)V":
-			jStr := frame.PopRef()
-			goStr := heap.JSToGoStr(jStr)
-			fmt.Println("**", goStr)
-		default:
-			panic("** panic")
-		}
-		frame.PopRef()
-		return
-	}
-
 	if invoke.kMethodRef == nil {
 		cp := frame.GetConstantPool()
 		invoke.kMethodRef = cp.GetConstant(invoke.Index).(*heap.ConstantMethodRef)

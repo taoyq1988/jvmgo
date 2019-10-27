@@ -8,14 +8,53 @@ import (
 	"github.com/taoyq1988/jvmgo/rtda/heap"
 )
 
-const isLog = false
+const isLog = true
+
+var _bootClasses = []string{
+	"java/lang/Class",
+	"java/lang/String",
+	"java/lang/System",
+	"java/lang/Thread",
+	"java/lang/ThreadGroup",
+	"java/io/PrintStream",
+}
 
 func Interpret(method *heap.Method) {
 	thread := rtda.NewThread()
 	frame := thread.NewFrame(method)
 	thread.PushFrame(frame)
+	initBootClass(thread)
+	jlSystemNotReady(thread)
 	defer catchError(frame)
 	loop(thread)
+}
+
+func initBootClass(thread *rtda.Thread) {
+	classLoader := heap.BootLoader()
+	for _, className := range _bootClasses {
+		class := classLoader.LoadClass(className)
+		if class.InitializationNotStarted() {
+			thread.InitClass(class)
+		}
+	}
+}
+
+func jlSystemNotReady(thread *rtda.Thread) bool {
+	classLoader := heap.BootLoader()
+	sysClass := classLoader.LoadClass("java/lang/System")
+	propsField := sysClass.GetStaticField("props", "Ljava/util/Properties;")
+	props := propsField.GetStaticValue().Ref
+	if props == nil {
+		undoExec(thread)
+		initSys := sysClass.GetStaticMethod("initializeSystemClass", "()V")
+		thread.InvokeMethod(initSys)
+		return true
+	}
+	return false
+}
+
+func undoExec(thread *rtda.Thread) {
+	thread.CurrentFrame().RevertNextPC()
 }
 
 func catchError(frame *rtda.Frame) {

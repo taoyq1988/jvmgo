@@ -1,7 +1,9 @@
 package rtda
 
 import (
+	. "github.com/taoyq1988/jvmgo/instructions/options"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
+	"strings"
 )
 
 type OnPopAction func(popped *Frame)
@@ -55,4 +57,52 @@ func (frame *Frame) RevertNextPC() {
 
 func (frame *Frame) AppendOnPopAction(action OnPopAction) {
 	frame.OnPopActions = append(frame.OnPopActions, action)
+}
+
+func (frame *Frame) GetClass() *heap.Class {
+	return frame.Method.Class
+}
+
+func (frame *Frame) GetClassLoader() *heap.ClassLoader {
+	return heap.BootLoader() //todo
+}
+
+func newNativeFrame(thread *Thread, method *heap.Method) *Frame {
+	frame := &Frame{
+		Thread:       thread,
+		Method:       method,
+		LocalVars:    newLocalVars(method.ParamSlotCount),
+		OperandStack: newOperandStack(4),
+	}
+	if method.Code == nil {
+		method.Code = getHackCode(method.Descriptor)
+	}
+	return frame
+}
+
+var (
+	_invokeNativeIReturn = []byte{OpInvokeNative, OpIReturn}
+	_invokeNativeLReturn = []byte{OpInvokeNative, OpLReturn}
+	_invokeNativeFReturn = []byte{OpInvokeNative, OpFReturn}
+	_invokeNativeDReturn = []byte{OpInvokeNative, OpDReturn}
+	_invokeNativeAReturn = []byte{OpInvokeNative, OpAReturn}
+	_invokeNativeReturn  = []byte{OpInvokeNative, OpReturn}
+)
+
+func getHackCode(methodDescriptor string) []byte {
+	rParenIdx := strings.IndexByte(methodDescriptor, ')')
+	switch methodDescriptor[rParenIdx+1] {
+	case 'V':
+		return _invokeNativeReturn
+	case 'L', '[':
+		return _invokeNativeAReturn
+	case 'D':
+		return _invokeNativeDReturn
+	case 'F':
+		return _invokeNativeFReturn
+	case 'J':
+		return _invokeNativeLReturn
+	default:
+		return _invokeNativeIReturn
+	}
 }

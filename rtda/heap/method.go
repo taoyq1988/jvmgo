@@ -1,6 +1,9 @@
 package heap
 
-import "github.com/taoyq1988/jvmgo/classfile"
+import (
+	"github.com/taoyq1988/jvmgo/classfile"
+	"strings"
+)
 
 const (
 	mainMethodName   = "main"
@@ -30,6 +33,39 @@ type Method struct {
 	exceptionTableIndex []uint16
 	nativeMethod        interface{} // cannot use package 'native' because of cycle import!
 	Instructions        interface{} // []instructions.Instruction
+}
+
+func (method *Method) GetNativeMethod() interface{} {
+	if method.nativeMethod == nil {
+		method.nativeMethod = findNativeMethod(method)
+	}
+	return method.nativeMethod
+}
+
+/**
+Judge
+*/
+func (method *Method) IsVoidReturnType() bool {
+	return strings.HasSuffix(method.Descriptor, ")V")
+}
+
+func (method *Method) isConstructor() bool {
+	return !method.IsStatic() && method.Name == constructorName
+}
+func (method *Method) IsClinit() bool {
+	return method.IsStatic() &&
+		method.Name == clinitMethodName &&
+		method.Descriptor == clinitMethodDesc
+}
+func (method *Method) IsRegisterNatives() bool {
+	return method.IsStatic() &&
+		method.Name == "registerNatives" &&
+		method.Descriptor == "()V"
+}
+func (method *Method) IsInitIDs() bool {
+	return method.IsStatic() &&
+		method.Name == "initIDs" &&
+		method.Descriptor == "()V"
 }
 
 func newMethod(class *Class, cf *classfile.Classfile, cfMember classfile.MemberInfo) *Method {

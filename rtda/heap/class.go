@@ -74,6 +74,12 @@ func (class *Class) NameJlsFormat() string {
 	return SlashToDot(class.Name)
 }
 
+func (class *Class) NewObjWithExtra(extra interface{}) *Object {
+	obj := class.NewObj()
+	obj.Extra = extra
+	return obj
+}
+
 func (class *Class) NewObj() *Object {
 	if class.instanceFieldCount > 0 {
 		fields := make([]Slot, class.instanceFieldCount)
@@ -156,8 +162,16 @@ func (class *Class) GetStaticMethod(name, descriptor string) *Method {
 	return class.getMethod(name, descriptor, true)
 }
 
+func (class *Class) GetInstanceMethod(name, descriptor string) *Method {
+	return class.getMethod(name, descriptor, false)
+}
+
 func (class *Class) GetClinitMethod() *Method {
 	return class.getDeclaredMethod(clinitMethodName, clinitMethodDesc, true)
+}
+
+func (obj *Object) GetGoClass() *Class {
+	return obj.Extra.(*Class)
 }
 
 /**

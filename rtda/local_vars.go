@@ -59,6 +59,10 @@ func (localVars *LocalVars) SetLocalVar(idx uint, slot heap.Slot) {
 	localVars.slots[idx] = slot
 }
 
+func (lv *LocalVars) GetBooleanVar(index uint) bool {
+	return lv.GetIntVar(index) == 1
+}
+
 func (localVars *LocalVars) GetThis() *heap.Object {
 	return localVars.GetRefVar(0)
 }

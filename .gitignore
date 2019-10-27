@@ -14,3 +14,8 @@ rt.jar
 *.class
 testjava
 !testjava/*.java
+
+#GRADLE
+.gradle
+build
+gradle

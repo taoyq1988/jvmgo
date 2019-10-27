@@ -1,6 +1,7 @@
 package heap
 
 import (
+	"github.com/taoyq1988/jvmgo/vmutils"
 	"reflect"
 	"sync"
 )
@@ -101,6 +102,11 @@ func (obj *Object) Ints() []int32      { return obj.Fields.([]int32) }
 func (obj *Object) Longs() []int64     { return obj.Fields.([]int64) }
 func (obj *Object) Floats() []float32  { return obj.Fields.([]float32) }
 func (obj *Object) Doubles() []float64 { return obj.Fields.([]float64) }
+
+func (obj *Object) GoBytes() []byte {
+	s := obj.Fields.([]int8)
+	return vmutils.CastInt8sToBytes(s)
+}
 
 /**
 InstanceOf

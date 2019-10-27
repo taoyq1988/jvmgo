@@ -29,26 +29,6 @@ func (composite *CompositeEntry) readClass(className string) (data []byte, err e
 	return
 }
 
-func (composite *CompositeEntry) open() error {
-	//for _, e := range composite.entries {
-	//	err := e.open()
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-	return nil
-}
-
-func (composite *CompositeEntry) release() error {
-	//for _, e := range composite.entries {
-	//	err := e.release()
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-	return nil
-}
-
 func (composite *CompositeEntry) String() string {
 	paths := make([]string, 0)
 	for _, e := range composite.entries {

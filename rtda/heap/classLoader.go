@@ -69,6 +69,10 @@ func (loader *ClassLoader) getClass(name string) *Class {
 	panic("class not loaded " + name)
 }
 
+func (loader *ClassLoader) GetPrimitiveClass(name string) *Class {
+	return loader.getClass(name)
+}
+
 func (loader *ClassLoader) _init() {
 	_jlObjectClass = loader.LoadClass(jlObjectClassName)
 	_jlClassClass = loader.LoadClass(jlClassClassName)

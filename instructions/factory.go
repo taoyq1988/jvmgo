@@ -11,6 +11,7 @@ import (
 	. "github.com/taoyq1988/jvmgo/instructions/math"
 	. "github.com/taoyq1988/jvmgo/instructions/options"
 	. "github.com/taoyq1988/jvmgo/instructions/references"
+	. "github.com/taoyq1988/jvmgo/instructions/reserved"
 	. "github.com/taoyq1988/jvmgo/instructions/stack"
 	. "github.com/taoyq1988/jvmgo/instructions/stores"
 	"github.com/taoyq1988/jvmgo/rtda/heap"
@@ -161,6 +162,9 @@ var (
 	dreturn     = &DReturn{}
 	areturn     = &AReturn{}
 	_return     = &Return{}
+
+	//reserved
+	invokeNative = &InvokeNative{}
 )
 
 func NewInstruction(opcode byte) base.Instruction {
@@ -564,8 +568,9 @@ func NewInstruction(opcode byte) base.Instruction {
 		return &GotoW{}
 	case OpJSRw:
 		return &JsrW{}
-	//case OpBreakpoint: //todo
-	//case OpInvokeNative:
+	//case OpBreakpoint:
+	case OpInvokeNative:
+		return invokeNative
 	//case OpBootstrap:
 
 	default:
