@@ -8,8 +8,7 @@
 #PROJECT
 jvmgo
 javap
-rt.jar
-rt-zulu.jar
+*.jar
 !/cmd/javap/main.go
 !/cmd/javap
 *.class

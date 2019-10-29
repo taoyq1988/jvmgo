@@ -40,7 +40,9 @@ func (invoke *InvokeVirtual) Execute(frame *rtda.Frame) {
 	}
 	ref := frame.TopRef(invoke.argSlotsCount)
 	if ref == nil {
-		frame.Thread.ThrowNPE()
+		//fixme: hack in invoke initializeSystemClass() {Thread current = Thread.currentThread();
+		//        current.getThreadGroup().add(current);}
+		//frame.Thread.ThrowNPE()
 		return
 	}
 
